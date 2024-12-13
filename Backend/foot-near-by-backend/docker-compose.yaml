@@ -9,6 +9,7 @@ services:
       - "5432:5432" # Expose the database on localhost:5432
     volumes:
       - postgis_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   postgis_data:
