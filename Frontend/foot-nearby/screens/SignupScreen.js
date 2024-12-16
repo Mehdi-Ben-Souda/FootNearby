@@ -21,13 +21,13 @@ const SignupScreen = ({ navigation }) => {
       return;
     }
 
-    try {
-      const response = await authService.register(username, email, password);
+    const response = await authService.register(username, email, password);
+    if (response) {
       console.log("Signup successful:", response);
       navigation.navigate("Welcome");
-    } catch (err) {
-      setError("Error signing up");
     }
+    else
+      Alert.alert("Invalid credentials", "invalid Email")
   };
 
   return (
