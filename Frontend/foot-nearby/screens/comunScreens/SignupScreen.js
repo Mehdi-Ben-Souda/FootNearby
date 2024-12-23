@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import authService from "../services/authService";
+import authService from "../../services/authService";
 
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
