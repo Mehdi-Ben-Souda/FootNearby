@@ -1,11 +1,53 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Button, Image } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+
 
 
 const HomeScreen = ({ navigation }) => {
+
+  const translateY = useSharedValue(0);
+
+  // Fonction qui démarre l'animation avec un effet de ressort
+  const startSpringAnimation = () => {
+    translateY.value = withSpring(-20, {
+      damping: 2, // Contrôle l'amortissement du ressort
+      stiffness: 100, // Contrôle la raideur du ressort
+    });
+  };
+
+  const stopSpringAnimation = () => {
+    translateY.value = withSpring(0, {
+      damping: 2, // Contrôle l'amortissement du ressort
+      stiffness: 100, // Contrôle la raideur du ressort
+    });
+  };
+
+  const handlePress = () => {
+    startSpringAnimation();
+    setTimeout(stopSpringAnimation, 200);
+  }
+
+  // Création d'un style animé basé sur la valeur partagée
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }], // Applique la translation
+    };
+  });
+
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Nearby Football Fields</Text>
+      <View style={{flexDirection: 'row',   alignItems: 'center'}}>
+        <Animated.View style={[ animatedStyle]}>
+          {/* <Text  style={[styles.title,animatedStyle]} onPress={handlePress} >Nearby Football Fields</Text> */}
+          {/* <Image source={require('../assets/Ball.png')} onPress={handlePress} style={{width: 100, height: 100}} /> */}
+          <Image source={require('../assets/Ball.png')} onPress={handlePress} style={{width: 50, height: 50}} />
+        </Animated.View> 
+        
+        <Text  style={[styles.title]} onPress={handlePress} >Foot Nearby </Text>
+      </View>
+      {/* <Text  style={[styles.title,animatedStyle]} >Nearby Football Fields</Text> */}
       <Text style={styles.description}>
         Discover, book, and play football near you in minutes!
       </Text>

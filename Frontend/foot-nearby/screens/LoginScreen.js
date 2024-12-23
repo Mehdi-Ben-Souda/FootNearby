@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
 import authService from "../services/authService";
 
@@ -13,13 +14,19 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    try {
-      const response = await authService.login(email, password);
-      console.log("Login successful:", response);
+
+    const response = await authService.login(email, password);
+    if (response) {
+      console.log("Login successful:", response.status);
       navigation.navigate("Welcome");
-    } catch (err) {
-      setError("Invalid email or password");
     }
+    else {
+      Alert.alert("Invalid credentials", "Email and password incorret")
+      console.log("email and password incorret");
+
+    }
+
+
   };
 
   return (
