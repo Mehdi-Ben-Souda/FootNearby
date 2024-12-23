@@ -1,6 +1,6 @@
 services:
   postgis:
-    image: postgis/postgis:15-3.3  # PostgreSQL 15 with PostGIS 3.3
+    image: postgis/postgis:latest  # PostgreSQL 15 with PostGIS 3.3
     container_name: postgis
     restart: always
     env_file:
