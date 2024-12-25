@@ -12,20 +12,34 @@ import authService from "../services/authService";
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [error, setError] = useState("");
+  const [sendingRequest, setSendingRequest] = useState(false);
   const handleLogin = async () => {
+    setError("");
+    setSendingRequest(true);
+    if (!email || !password) {
+      setError("All fields are required");
+      setSendingRequest(false);
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Invalid email");
+      setSendingRequest(false);
+      return;
+    }
+    const response = await authService.login(email, password, setError);
+    console.log(response);
 
-    const response = await authService.login(email, password);
     if (response) {
-      console.log("Login successful:", response.status);
-      navigation.navigate("Welcome");
-    }
-    else {
-      Alert.alert("Invalid credentials", "Email and password incorret")
-      console.log("email and password incorret");
+      setSendingRequest(false);
+      console.log("Login successful:");
+      if (getUser().role == 1)
+        navigation.navigate("WelcomeScreenManager");
+      else
+        navigation.navigate("WelcomeScreenPlayer");
 
     }
-
+    setSendingRequest(false);
 
   };
 
@@ -53,15 +67,19 @@ const LoginScreen = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
       />
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      {/* Lien pour "Mot de passe oublié ?" */}
       <TouchableOpacity>
         <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
       </TouchableOpacity>
 
       {/* Bouton de soumission */}
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Log in</Text>
+      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={sendingRequest}>
+        {sendingRequest ? (
+          <Text style={styles.buttonText}>Loading...</Text>
+        ) : (
+          <Text style={styles.buttonText}>Log in</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -71,7 +89,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "left",
+    alignItems: "flex-start",
     backgroundColor: "#FFFFFF", // Arrière-plan blanc
     padding: 20,
   },
@@ -97,6 +115,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#000000", // Texte noir
     textDecorationLine: "underline",
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 15,
   },
   button: {
     width: "100%",
