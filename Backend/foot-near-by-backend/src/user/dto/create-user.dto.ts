@@ -1,15 +1,20 @@
+import {Column} from "typeorm";
+import {UserRole} from "../enum/role_user-enum";
 
 export class CreateUserDto {
-    constructor(email: string, password: string, username: string) {
+    constructor(name: string, email: string, password: string, phoneNumber: string,role:UserRole) {
+        this.name = name;
         this.email = email;
         this.password = password;
-        this.username = username;
+        this.phoneNumber = phoneNumber;
+        this.role=role;
     }
 
+    name: string;
     email: string;
-
     password: string;
+    phoneNumber:string;
+    role:UserRole;
 
-    username: string;
 
 }
