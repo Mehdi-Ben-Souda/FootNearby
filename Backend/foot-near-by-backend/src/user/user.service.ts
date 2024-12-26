@@ -14,8 +14,9 @@ export class UserService {
       private readonly entityManager:EntityManager) {
   }
   async create(createUserDto: CreateUserDto) {
-    const user = new User(createUserDto)
-    return await this.entityManager.save(user)
+    // const user = new User(createUserDto)
+    const user= this.userRepository.create(createUserDto);
+    return await this.userRepository.save(user)
   }
 
   async findAll() {
