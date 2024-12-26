@@ -28,6 +28,7 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.2",
+    "@types/geojson": "^7946.0.15",
     "foot-near-by-backend": "file:",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
