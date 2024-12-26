@@ -1,0 +1,4 @@
+CREATE USER footnearby WITH PASSWORD 'footnearby';
+CREATE DATABASE footnearbyDB;
+GRANT ALL PRIVILEGES ON DATABASE footnearbyDB TO footnearby;
+ALTER USER footnearby WITH SUPERUSER;
