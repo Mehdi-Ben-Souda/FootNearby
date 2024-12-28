@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import authService from "../services/authService";
+import { getUser, setUser, user } from "../sharedData/data";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -28,8 +29,7 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     const response = await authService.login(email, password, setError);
-    console.log(response);
-
+    console.log("Response", response);
     if (response) {
       setSendingRequest(false);
       console.log("Login successful:");
@@ -37,7 +37,7 @@ const LoginScreen = ({ navigation }) => {
         navigation.navigate("WelcomeScreenManager");
       else
         navigation.navigate("WelcomeScreenPlayer");
-
+      setSendingRequest(false);
     }
     setSendingRequest(false);
 

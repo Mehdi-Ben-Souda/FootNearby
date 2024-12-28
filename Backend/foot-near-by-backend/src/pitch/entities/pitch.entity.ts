@@ -1,5 +1,6 @@
 import { TimeSlot } from "src/time-slot/entities/time-slot.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {Point} from "geojson";
 
 @Entity("pitch")
 export class Pitch {
@@ -11,10 +12,13 @@ export class Pitch {
     description : string;
     @Column()
     address : string;
-    @Column()
-    latitude : number;
-    @Column()
-    longitude : number;
+
+    @Column({
+        type: 'geometry',
+        spatialFeatureType: 'Point',
+        srid: 4326
+    })
+    location: Point;
     @Column()
     pricePerHour : number;
     @Column()
@@ -29,5 +33,12 @@ export class Pitch {
 
     constructor(user:Partial<Pitch>) {
         Object.assign(this,user)
+    }
+
+    setCoordinates(latitude: number, longitude: number) {
+        this.location = {
+            type: 'Point',
+            coordinates: [longitude, latitude]
+        };
     }
 }
