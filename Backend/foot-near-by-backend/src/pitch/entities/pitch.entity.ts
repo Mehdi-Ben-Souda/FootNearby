@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { TimeSlot } from "src/time-slot/entities/time-slot.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("pitch")
 export class Pitch {
@@ -20,6 +21,11 @@ export class Pitch {
     capacity : number;
     @Column("simple-array")
     images: string[];
+
+
+    //associations
+    @OneToMany(() => TimeSlot, timeSlot => timeSlot.pitch)
+    timeSlots: TimeSlot[];
 
     constructor(user:Partial<Pitch>) {
         Object.assign(this,user)

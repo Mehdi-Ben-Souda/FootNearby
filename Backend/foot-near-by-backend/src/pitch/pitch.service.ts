@@ -25,6 +25,6 @@ export class PitchService {
     }
 
     getPitchById(pitchId:number) {
-        return this.pitchRepository.findBy({id:pitchId});
+        return this.pitchRepository.findOneBy({id:pitchId});
     }
 }
