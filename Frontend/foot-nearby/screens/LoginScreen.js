@@ -9,12 +9,16 @@ import {
 } from "react-native";
 import authService from "../services/authService";
 import { getUser, setUser, user } from "../sharedData/data";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../redux/actions/authActions";
+
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [sendingRequest, setSendingRequest] = useState(false);
+  const dispatch = useDispatch();
   const handleLogin = async () => {
     setError("");
     setSendingRequest(true);
@@ -28,11 +32,13 @@ const LoginScreen = ({ navigation }) => {
       setSendingRequest(false);
       return;
     }
-    const response = await authService.login(email, password, setError);
+    dispatch(loginUser( email, password ));
+    //const response = await authService.login(email, password, setError);
     console.log("Response", response);
     if (response) {
       setSendingRequest(false);
       console.log("Login successful:");
+      dispatch(log);
       if (getUser().role == 1)
         navigation.navigate("WelcomeScreenManager");
       else

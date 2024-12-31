@@ -2,7 +2,7 @@ import axios from "axios";
 import { getUser, setUser, user } from "../sharedData/data";
 import User from "../models/User";
 
-const API_URL = "http://172.20.3.117:3000/auth";
+const API_URL = "http://192.168.137.1:3000/auth";
 
 const authService = {
   login: async (email, password, setError) => {
