@@ -21,6 +21,7 @@ export class PitchController {
     getAllPitches() {
         return this.pitchService.getAllPitches();
     }
+
     @Get('getById/:id')
     getPitchById(@Param('id') id: number) {
         return this.pitchService.getPitchById(id);
