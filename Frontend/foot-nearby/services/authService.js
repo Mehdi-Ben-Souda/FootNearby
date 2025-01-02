@@ -2,7 +2,7 @@ import axios from "axios";
 import { getUser, setUser, user } from "../sharedData/data";
 import User from "../models/User";
 
-const API_URL = "http://172.20.3.117:3000/auth";
+const API_URL = "http://192.168.1.102:3000/auth";
 
 const authService = {
   login: async (email, password, setError) => {
@@ -23,13 +23,8 @@ const authService = {
       }
       return null;
     }
-
   },
-  register: async (
-    name,
-    email,
-    password,
-    phoneNumber, role, setError) => {
+  register: async (name, email, password, phoneNumber, role, setError) => {
     try {
       console.log("sending request...");
       const rsp = await axios.post(`${API_URL}/register`, {
@@ -37,7 +32,7 @@ const authService = {
         email,
         password,
         phoneNumber,
-        role
+        role,
       });
       if (rsp.status != 200) {
         console.log("Error");
@@ -55,7 +50,6 @@ const authService = {
 
       return null;
     }
-
   },
   //resetPassword: (email) => axios.post(`${API_URL}/reset-password`, { email }),
 };
