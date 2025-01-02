@@ -2,8 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { getUser } from '../../sharedData/data';
 
+import { useSelector } from 'react-redux';
+
 const ProfileScreen = () => {
-    let user = getUser();
+    let user= useSelector(state => state.auth.user)
+
+    // let user = getUser();
 
     return (
         <View style={styles.container}>

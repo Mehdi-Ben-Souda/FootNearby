@@ -1,4 +1,6 @@
+import axios from "axios";
 import User from "../../models/User";
+import { API_URL } from '@env';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -27,19 +29,24 @@ export const logout = () => ({
 export const loginUser = (email, password) => async (dispatch) => {
     dispatch(loginRequest());
     try {
-        const rsp = await axios.post(`${API_URL}/login`, { email, password });
+        const rsp = await axios.post(`${API_URL}/auth/login`, { email, password });
         if (rsp.status != 200) {
-            console.log("Error");
+            console.log("Invalid Credentials");
             dispatch(loginFailure("Invalid Credentials"));
+            return { success: false , message : "Invalid Credentials" }
         } else {
-            dispatch(loginSuccess(User.fromJson(rsp.data)));
+            const user = User.fromJson(rsp.data);
+            dispatch(loginSuccess(user));
+            return { success: true,role : user.role};
         }
     } catch (error) {
-        console.log("Error", error);
+        console.log("Exception ", error);
         if (error.response && error.response.status == 400) {
             dispatch(loginFailure("Invalid Credentials"));
+            return { success: false , message : "Error" }
         } else {
             dispatch(loginFailure("An error occurred during signup"));
+            return { success: false , message : "An error occurred during signup" }
         }
     }
 };
