@@ -3,7 +3,8 @@ import ProfileScreen from "../ProfileScreeen";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { View } from "react-native";
-import TerrainsScreen from "../TerrainsScreen";
+import ViewPitchScreen from "../ViewPitchScreen";
+import AddPitchScreen from "../AddPitchScreen";
 
 const Tab = createBottomTabNavigator(); //creation d’ une instance du Tab.Navigator en utilisant createBottomTabNavigator
 const TabNavigator = (props) => {
@@ -27,18 +28,33 @@ const TabNavigator = (props) => {
           }}
         />
         <Tab.Screen
-          name="Terrains"
-          component={TerrainsScreen}
+          name="Add Pitch"
+          component={AddPitchScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
-                name="soccer"
+                name="plus-circle"
                 size={size}
                 color={color}
                 style={{ width: "30" }}
               />
             ),
-            tabBarLabel: "Terrains",
+            tabBarLabel: "Add Pitch",
+          }}
+        />
+        <Tab.Screen
+          name="View Pitch"
+          component={ViewPitchScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="format-list-bulleted"
+                size={size}
+                color={color}
+                style={{ width: "30" }}
+              />
+            ),
+            tabBarLabel: "View Pitch",
           }}
         />
       </Tab.Navigator>

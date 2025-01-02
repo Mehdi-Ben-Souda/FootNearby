@@ -7,13 +7,15 @@ import SignupScreen from "./screens/SignupScreen";
 import WelcomeScreenPlayer from "./screens/Joueur/WelcomeScreenPlayer";
 import WelcomeScreenManager from "./screens/responsable/WelcomeScreenManager";
 import AddPitchScreen from "./screens/responsable/AddPitchScreen";
+import ViewPitchScreen from "./screens/responsable/ViewPitchScreen";
+import EditPitchScreen from "./screens/responsable/EditPitchScreen";
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="AddPitch">
+      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
           component={HomeScreen}
@@ -43,6 +45,16 @@ const App = () => {
           name="AddPitch"
           component={AddPitchScreen}
           options={{ title: "Add a Pitch" }}
+        />
+        <Stack.Screen
+          name="ViewPitch"
+          component={ViewPitchScreen}
+          options={{ title: "View Pitches" }}
+        />
+        <Stack.Screen
+          name="EditPitch"
+          component={EditPitchScreen}
+          options={{ title: "Edit Pitches" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

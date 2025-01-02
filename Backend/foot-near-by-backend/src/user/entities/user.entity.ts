@@ -1,6 +1,7 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {UserResponseDto} from "../dto/response-user-dtp";
 import {UserRole} from "../enum/role_user-enum";
+import { Pitch } from "src/pitch/entities/pitch.entity";
 
 @Entity("user")
 export class User {
@@ -23,6 +24,9 @@ export class User {
     role:UserRole;
     @Column({ nullable: true })
     image:string;
+
+    @OneToMany(() => Pitch, pitch => pitch.createdBy)
+    pitches: Pitch[];
 
     constructor(user:Partial<User>) {
         Object.assign(this,user)
