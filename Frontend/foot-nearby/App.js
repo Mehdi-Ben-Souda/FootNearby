@@ -10,6 +10,9 @@ import { Provider } from "react-redux";
 import store from "./redux/stores/store";
 
 
+import AddPitchScreen from "./screens/responsable/AddPitchScreen";
+import ViewPitchScreen from "./screens/responsable/ViewPitchScreen";
+import EditPitchScreen from "./screens/responsable/EditPitchScreen";
 
 const Stack = createStackNavigator();
 
@@ -33,10 +36,31 @@ const App = () => {
             component={SignupScreen}
             options={{ title: "Sign up" }}
           />
-          <Stack.Screen name="WelcomeScreenPlayer" component={WelcomeScreenPlayer}
-            options={{ headerShown: false }} />
-          <Stack.Screen name="WelcomeScreenManager" component={WelcomeScreenManager}
-            options={{ headerShown: false }} />
+          <Stack.Screen
+            name="WelcomeScreenPlayer"
+            component={WelcomeScreenPlayer}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="WelcomeScreenManager"
+            component={WelcomeScreenManager}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AddPitch"
+            component={AddPitchScreen}
+            options={{ title: "Add a Pitch" }}
+          />
+          <Stack.Screen
+            name="ViewPitch"
+            component={ViewPitchScreen}
+            options={{ title: "View Pitches" }}
+          />
+          <Stack.Screen
+            name="EditPitch"
+            component={EditPitchScreen}
+            options={{ title: "Edit Pitches" }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

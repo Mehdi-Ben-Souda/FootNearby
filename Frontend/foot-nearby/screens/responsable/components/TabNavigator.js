@@ -1,28 +1,64 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfileScreen from "../ProfileScreeen";
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { View } from "react-native";
-import TerrainsScreen from "../TerrainsScreen";
+import ViewPitchScreen from "../ViewPitchScreen";
+import AddPitchScreen from "../AddPitchScreen";
 
 const Tab = createBottomTabNavigator(); //creation d’ une instance du Tab.Navigator en utilisant createBottomTabNavigator
 const TabNavigator = (props) => {
-    return ( /* Définir les écrans dans le Tab.Navigator */
-        <View style={{ flex: 1 }}>
-            <Tab.Navigator initialRouteName="Profile">
-
-                <Tab.Screen name="Profile" component={ProfileScreen} options={{
-                    tabBarIcon: ({ color, size }) => (<MaterialCommunityIcons name="account" size={size} color={color} style={{ width: '30' }} />),
-                    tabBarLabel: 'Profile'
-                }} />
-                <Tab.Screen name="Terrains" component={TerrainsScreen} options={{
-                    tabBarIcon: ({ color, size }) => (<MaterialCommunityIcons name="soccer" size={size} color={color} style={{ width: '30' }} />),
-                    tabBarLabel: 'Terrains'
-                }} />
-
-            </Tab.Navigator>
-        </View>
-
-    )
-}
+  return (
+    /* Définir les écrans dans le Tab.Navigator */
+    <View style={{ flex: 1 }}>
+      <Tab.Navigator initialRouteName="Profile">
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="account"
+                size={size}
+                color={color}
+                style={{ width: "30" }}
+              />
+            ),
+            tabBarLabel: "Profile",
+          }}
+        />
+        <Tab.Screen
+          name="Add Pitch"
+          component={AddPitchScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="plus-circle"
+                size={size}
+                color={color}
+                style={{ width: "30" }}
+              />
+            ),
+            tabBarLabel: "Add Pitch",
+          }}
+        />
+        <Tab.Screen
+          name="View Pitch"
+          component={ViewPitchScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="format-list-bulleted"
+                size={size}
+                color={color}
+                style={{ width: "30" }}
+              />
+            ),
+            tabBarLabel: "View Pitch",
+          }}
+        />
+      </Tab.Navigator>
+    </View>
+  );
+};
 export default TabNavigator;

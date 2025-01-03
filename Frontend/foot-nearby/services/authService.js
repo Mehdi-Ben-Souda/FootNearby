@@ -23,13 +23,8 @@ const authService = {
       }
       return null;
     }
-
   },
-  register: async (
-    name,
-    email,
-    password,
-    phoneNumber, role, setError) => {
+  register: async (name, email, password, phoneNumber, role, setError) => {
     try {
       console.log("sending request...");
       const rsp = await axios.post(`${API_URL}/auth/register`, {
@@ -37,7 +32,7 @@ const authService = {
         email,
         password,
         phoneNumber,
-        role
+        role,
       });
       if (rsp.status != 200) {
         console.log("Error");
@@ -55,7 +50,6 @@ const authService = {
 
       return null;
     }
-
   },
   //resetPassword: (email) => axios.post(`${API_URL}/reset-password`, { email }),
 };
