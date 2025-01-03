@@ -1,5 +1,6 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Point} from "geojson";
+import { User } from "src/user/entities/user.entity";
 
 @Entity("pitch")
 export class Pitch {
@@ -24,6 +25,9 @@ export class Pitch {
     capacity : number;
     @Column("simple-array")
     images: string[];
+
+    @ManyToOne(() => User, user => user.pitches, { eager: true })
+    createdBy: User;
 
     constructor(user:Partial<Pitch>) {
         Object.assign(this,user)
