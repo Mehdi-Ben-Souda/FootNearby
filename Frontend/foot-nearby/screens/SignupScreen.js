@@ -47,11 +47,12 @@ const SignupScreen = ({ navigation }) => {
     try {
       const response = await authService.register(username, email, password, phoneNumber, role, setError);
       if (response) {
-        console.log("Signup successful :" + getUser().role);
-        if (getUser().role == 1)
-          navigation.navigate("WelcomeScreenManager");
-        else
-          navigation.navigate("WelcomeScreenPlayer");
+        // console.log("Signup successful :" + getUser().role);
+        // if (getUser().role == 1)
+        //   navigation.navigate("WelcomeScreenManager");
+        // else
+        //   navigation.navigate("WelcomeScreenPlayer");
+        navigation.navigate("LoginScreen");
       }
     } catch (err) {
       setError("An error occurred during signup");

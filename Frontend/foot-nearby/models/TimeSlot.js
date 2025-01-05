@@ -7,7 +7,8 @@ class TimeSlot {
     }
 
     static fromJson(json) {
-        const data = JSON.parse(json);
+        console.log("json: ", json);
+        const data = json;
         return new TimeSlot(
             data.id,
             new Date(parseInt(data.startHour)),
