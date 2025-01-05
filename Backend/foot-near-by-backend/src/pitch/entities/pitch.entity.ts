@@ -1,6 +1,7 @@
 import { TimeSlot } from "src/time-slot/entities/time-slot.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import {Point} from "geojson";
+import { User } from "src/user/entities/user.entity";
 
 @Entity("pitch")
 export class Pitch {
@@ -30,6 +31,8 @@ export class Pitch {
     //associations
     @OneToMany(() => TimeSlot, timeSlot => timeSlot.pitch)
     timeSlots: TimeSlot[];
+    @ManyToOne(() => User, user => user.pitches, { eager: true })
+    createdBy: User;
 
     constructor(user:Partial<Pitch>) {
         Object.assign(this,user)

@@ -12,10 +12,10 @@ export class PitchController {
         return this.pitchService.createPitch(pitch);
     }
 
-    @Put('modify')
-    modifyPitch(@Body() pitch: Pitch) {
-        return this.pitchService.modifyPitch(pitch);
-    }
+    @Put('modify/:id')
+    modifyPitch(@Param('id') id: number,@Body() pitch: Partial<Pitch>) {
+        return this.pitchService.modifyPitch(id,pitch);
+    }
 
     @Get('get')
     getAllPitches() {
@@ -25,6 +25,11 @@ export class PitchController {
     @Get('getById/:id')
     getPitchById(@Param('id') id: number) {
         return this.pitchService.getPitchById(id);
+    }
+
+    @Get('getByUserId/:userId')
+    getPitchesByUserId(@Param('userId') userId: number) {
+        return this.pitchService.getPitchesByUserId(userId);
     }
 
     @Delete('delete')

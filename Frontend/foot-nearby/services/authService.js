@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getUser, setUser, user } from "../sharedData/data";
 import User from "../models/User";
-
-const API_URL = "http://192.168.1.102:3000/auth";
+import { API_URL } from '@env';
+//const API_URL = "http://192.168.137.1:3000/auth";
 
 const authService = {
   login: async (email, password, setError) => {
@@ -27,7 +27,7 @@ const authService = {
   register: async (name, email, password, phoneNumber, role, setError) => {
     try {
       console.log("sending request...");
-      const rsp = await axios.post(`${API_URL}/register`, {
+      const rsp = await axios.post(`${API_URL}/auth/register`, {
         name,
         email,
         password,

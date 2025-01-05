@@ -13,9 +13,9 @@ export class PitchService {
         return this.pitchRepository.save(newPitch);
     }
 
-    modifyPitch(newPitch:Pitch) {
-        return this.pitchRepository.update(newPitch.id,newPitch);
-    }
+    modifyPitch(id:number,newPitch:Partial<Pitch>) {
+        return this.pitchRepository.update(id,newPitch);
+    }
 
     deletePitch(pitchId:number) {
         return this.pitchRepository.delete(pitchId);
@@ -27,6 +27,12 @@ export class PitchService {
 
     getPitchById(pitchId:number) {
         return this.pitchRepository.findOneBy({id:pitchId});
+    }
+
+    getPitchesByUserId(userId: number) {
+        return this.pitchRepository.find({
+            where: { createdBy: { id: userId } },
+        });
     }
 
     async pitchWithinRadius(center: Point, radiusInKm: number, limit: number = 10) {
