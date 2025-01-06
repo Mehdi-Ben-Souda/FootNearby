@@ -1,18 +1,19 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import SignupScreen from "./screens/SignupScreen";
-import WelcomeScreenPlayer from "./screens/Joueur/WelcomeScreenPlayer";
-import WelcomeScreenManager from "./screens/responsable/WelcomeScreenManager";
-import { Provider } from "react-redux";
-import store from "./redux/stores/store";
+import React, { lazy, Suspense } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Provider } from 'react-redux';
+import store from './redux/stores/store';
+import LazyLoader from './screens/LazyLoader';
 
-
-import AddPitchScreen from "./screens/responsable/AddPitchScreen";
-import ViewPitchScreen from "./screens/responsable/ViewPitchScreen";
-import EditPitchScreen from "./screens/responsable/EditPitchScreen";
+// Lazy load screens
+const HomeScreen = lazy(() => import('./screens/HomeScreen'));
+const LoginScreen = lazy(() => import('./screens/LoginScreen'));
+const SignupScreen = lazy(() => import('./screens/SignupScreen'));
+const WelcomeScreenPlayer = lazy(() => import('./screens/Joueur/WelcomeScreenPlayer'));
+const WelcomeScreenManager = lazy(() => import('./screens/responsable/WelcomeScreenManager'));
+const AddPitchScreen = lazy(() => import('./screens/responsable/AddPitchScreen'));
+const ViewPitchScreen = lazy(() => import('./screens/responsable/ViewPitchScreen'));
+const EditPitchScreen = lazy(() => import('./screens/responsable/EditPitchScreen'));
 
 const Stack = createStackNavigator();
 
@@ -20,48 +21,50 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ title: "Home", headerShown: false }}
-          />
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ title: "Log in" }}
-          />
-          <Stack.Screen
-            name="Signup"
-            component={SignupScreen}
-            options={{ title: "Sign up" }}
-          />
-          <Stack.Screen
-            name="WelcomeScreenPlayer"
-            component={WelcomeScreenPlayer}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="WelcomeScreenManager"
-            component={WelcomeScreenManager}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="AddPitch"
-            component={AddPitchScreen}
-            options={{ title: "Add a Pitch" }}
-          />
-          <Stack.Screen
-            name="ViewPitch"
-            component={ViewPitchScreen}
-            options={{ title: "View Pitches" }}
-          />
-          <Stack.Screen
-            name="EditPitch"
-            component={EditPitchScreen}
-            options={{ title: "Edit Pitches" }}
-          />
-        </Stack.Navigator>
+        <Suspense fallback={<LazyLoader />}>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen
+              name="Home"
+              component={props => <HomeScreen {...props} />}
+              options={{ title: 'Home', headerShown: false }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={props => <LoginScreen {...props} />}
+              options={{ title: 'Log in' }}
+            />
+            <Stack.Screen
+              name="Signup"
+              component={props => <SignupScreen {...props} />}
+              options={{ title: 'Sign up' }}
+            />
+            <Stack.Screen
+              name="WelcomeScreenPlayer"
+              component={props => <WelcomeScreenPlayer {...props} />}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="WelcomeScreenManager"
+              component={props => <WelcomeScreenManager {...props} />}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="AddPitch"
+              component={props => <AddPitchScreen {...props} />}
+              options={{ title: 'Add a Pitch' }}
+            />
+            <Stack.Screen
+              name="ViewPitch"
+              component={props => <ViewPitchScreen {...props} />}
+              options={{ title: 'View Pitches' }}
+            />
+            <Stack.Screen
+              name="EditPitch"
+              component={props => <EditPitchScreen {...props} />}
+              options={{ title: 'Edit Pitches' }}
+            />
+          </Stack.Navigator>
+        </Suspense>
       </NavigationContainer>
     </Provider>
   );

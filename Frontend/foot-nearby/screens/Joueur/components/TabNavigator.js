@@ -9,12 +9,12 @@ const Tab = createBottomTabNavigator(); //creation d’ une instance du Tab.Navi
 const TabNavigator = (props) => {
     return ( /* Définir les écrans dans le Tab.Navigator */
         <View style={{ flex: 1 }}>
-            <Tab.Navigator initialRouteName="Profile">
+            <Tab.Navigator initialRouteName="Horaires">
 
-                <Tab.Screen name="Profile" component={ProfileScreen} options={{
+                { <Tab.Screen name="Profile" component={ProfileScreen} options={{
                     tabBarIcon: ({ color, size }) => (<MaterialCommunityIcons name="account" size={size} color={color} style={{ width: '30' }} />),
                     tabBarLabel: 'Profile'
-                }} />
+                }} /> }
                 <Tab.Screen name="Terrains" component={TerrainsScreen} options={{
                     tabBarIcon: ({ color, size }) => (<MaterialCommunityIcons name="soccer" size={size} color={color} style={{ width: '30' }} />),
                     tabBarLabel: 'Terrains'
