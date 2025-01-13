@@ -4,6 +4,6 @@ import SearchPitchReducer from './searchPitchReducer'
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    searchPitch: SearchPitchReducer,
+    // searchPitch: SearchPitchReducer,
 });
 export default rootReducer;
