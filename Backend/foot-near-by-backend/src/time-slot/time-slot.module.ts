@@ -9,5 +9,6 @@ import { PitchModule } from 'src/pitch/pitch.module';
   imports:[TypeOrmModule.forFeature([TimeSlot]),PitchModule],
   controllers: [TimeSlotController],
   providers: [TimeSlotService],
+  exports:[TimeSlotService]
 })
 export class TimeSlotModule {}

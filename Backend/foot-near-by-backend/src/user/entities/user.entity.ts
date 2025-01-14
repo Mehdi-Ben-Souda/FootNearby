@@ -2,6 +2,7 @@ import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {UserResponseDto} from "../dto/response-user-dtp";
 import {UserRole} from "../enum/role_user-enum";
 import { Pitch } from "src/pitch/entities/pitch.entity";
+import { Reservation } from "src/reservation/entities/reservation.entity";
 
 @Entity("user")
 export class User {
@@ -27,6 +28,9 @@ export class User {
 
     @OneToMany(() => Pitch, pitch => pitch.createdBy)
     pitches: Pitch[];
+
+    @OneToMany(() => Reservation, reservation => reservation.user)
+    reservations: Reservation[];
 
     constructor(user:Partial<User>) {
         Object.assign(this,user)

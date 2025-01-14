@@ -58,6 +58,23 @@ export class TimeSlotService {
     return slots;
   }
 
+  findOne(id: number) {
+    return  this.timeSlotRepository.findOneBy({id});
+  }
+
+  update(id: number, updateTimeSlotDto: UpdateTimeSlotDto) {
+    this.timeSlotRepository.findOneBy({id}).then((value) => {
+      if (value) {
+        this.timeSlotRepository.update(id, updateTimeSlotDto);
+      }
+      else {
+        throw new Error('Time slot not found');
+      }
+    });
+    
+    return `This action updates a #${id} timeSlot`;
+  }
+
   /*create(createTimeSlotDto: CreateTimeSlotDto) {
     return 'This action adds a new timeSlot';
   }
@@ -66,13 +83,9 @@ export class TimeSlotService {
     return `This action returns all timeSlot`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} timeSlot`;
-  }
+  
 
-  update(id: number, updateTimeSlotDto: UpdateTimeSlotDto) {
-    return `This action updates a #${id} timeSlot`;
-  }
+  
 
   remove(id: number) {
     return `This action removes a #${id} timeSlot`;
