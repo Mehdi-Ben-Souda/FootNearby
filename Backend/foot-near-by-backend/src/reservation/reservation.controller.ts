@@ -8,20 +8,21 @@ export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
   @Post()
-  create(@Body() createReservationDto: CreateReservationDto) {
+  create(@Body() createReservationDto: Partial<CreateReservationDto> ) {
     return this.reservationService.create(createReservationDto);
   }
 
-  @Get()
-  findAll() {
-    return this.reservationService.findAll();
-  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reservationService.findOne(+id);
   }
 
+  //Not yet implemented
+  @Get()
+  findAll() {
+    return this.reservationService.findAll();
+  }
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
     return this.reservationService.update(+id, updateReservationDto);
