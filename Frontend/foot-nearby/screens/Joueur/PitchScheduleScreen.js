@@ -6,6 +6,8 @@ import axios from 'axios';
 import TimeSlot from "../../models/TimeSlot";
 import TimeSlotService from '../../services/TimeSlotService';
 import { ScrollView } from 'react-native-gesture-handler';
+import ReservationModal from './components/ReservationModal';
+import { useSelector } from 'react-redux';
 
 const PitchScheduleScreen = ({ }) => {
 
@@ -13,6 +15,10 @@ const PitchScheduleScreen = ({ }) => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [slots, setSlots] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedSlot, setSelectedSlot] = useState(null);
+
+    let user= useSelector(state => state.auth.user);
 
     useEffect(() => {
         fetchSlots();
@@ -31,14 +37,24 @@ const PitchScheduleScreen = ({ }) => {
         }
     };
 
-    const handleBooking = async (slotId) => {
-        // try {
-        //     await axios.post(`/api/reservations/slots/${slotId}`);
-        //     Alert.alert('Success', 'Slot booked successfully');
-        //     fetchSlots(); // Refresh slots
-        // } catch (error) {
-        //     Alert.alert('Error', 'Failed to book slot');
-        // }
+    const handleBooking = async (slot) => {
+        try {
+            console.log("Slot booked: ", slot.id);
+            console.log("User: ", user.id);
+            await TimeSlotService.bookTimeSlot(slot.id, user.id);
+            
+            Alert.alert('Succès', 'Créneau réservé avec succès');
+            setModalVisible(false);
+            fetchSlots(); // Refresh slots
+        } catch (error) {
+            Alert.alert('Erreur', 'Échec de la réservation');
+        }
+    };
+
+    const handleSlotPress = (slot) => {
+        console.log("Slot pressed:", slot); // Add this debug log
+        setSelectedSlot(slot);
+        setModalVisible(true);
     };
 
     const TimeSlotGrid = () => (
@@ -55,7 +71,8 @@ const PitchScheduleScreen = ({ }) => {
                         }
                     ]}
                     disabled={slot.status !== 'FREE'}
-                //onPress={() => handleBooking(slot.id)}
+                    onPress={() => handleSlotPress(slot)}
+                    activeOpacity={0.7}
                 >
                     <Text style={styles.slotTime}>
                         {new Date(slot.startHour).toLocaleTimeString([], {
@@ -91,6 +108,18 @@ const PitchScheduleScreen = ({ }) => {
                     <TimeSlotGrid />
                 )
             )}
+            <ReservationModal
+                visible={modalVisible}
+                onClose={() => {
+                    setModalVisible(false);
+                    setSelectedSlot(null); // Reset selected slot when closing modal
+                }}
+                onConfirm={() => selectedSlot && handleBooking(selectedSlot)}
+                slotTime={selectedSlot ? new Date(selectedSlot.startHour).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : ''}
+            />
         </View>
     );
 }

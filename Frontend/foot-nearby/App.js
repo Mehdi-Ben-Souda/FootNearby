@@ -25,42 +25,42 @@ const App = () => {
           <Stack.Navigator initialRouteName="Home">
             <Stack.Screen
               name="Home"
-              component={props => <HomeScreen {...props} />}
+              children={props => <HomeScreen {...props} />}
               options={{ title: 'Home', headerShown: false }}
             />
             <Stack.Screen
               name="Login"
-              component={props => <LoginScreen {...props} />}
+              children={props => <LoginScreen {...props} />}
               options={{ title: 'Log in' }}
             />
             <Stack.Screen
               name="Signup"
-              component={props => <SignupScreen {...props} />}
+              children={props => <SignupScreen {...props} />}
               options={{ title: 'Sign up' }}
             />
             <Stack.Screen
               name="WelcomeScreenPlayer"
-              component={props => <WelcomeScreenPlayer {...props} />}
+              children={props => <WelcomeScreenPlayer {...props} />}
               options={{ headerShown: false }}
             />
             <Stack.Screen
               name="WelcomeScreenManager"
-              component={props => <WelcomeScreenManager {...props} />}
+              children={props => <WelcomeScreenManager {...props} />}
               options={{ headerShown: false }}
             />
             <Stack.Screen
               name="AddPitch"
-              component={props => <AddPitchScreen {...props} />}
+              children={props => <AddPitchScreen {...props} />}
               options={{ title: 'Add a Pitch' }}
             />
             <Stack.Screen
               name="ViewPitch"
-              component={props => <ViewPitchScreen {...props} />}
+              children={props => <ViewPitchScreen {...props} />}
               options={{ title: 'View Pitches' }}
             />
             <Stack.Screen
               name="EditPitch"
-              component={props => <EditPitchScreen {...props} />}
+              children={props => <EditPitchScreen {...props} />}
               options={{ title: 'Edit Pitches' }}
             />
           </Stack.Navigator>
