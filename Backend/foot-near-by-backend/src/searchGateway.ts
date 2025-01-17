@@ -37,7 +37,7 @@ export class SearchGateway implements OnGatewayConnection, OnGatewayDisconnect {
             coordinates: [parseFloat(radiusData.latitude), parseFloat(radiusData.longitude)],
         }, parseFloat(radiusData.radius))
             .then(results => {
-                console.log(results);
+                console.log(results); 
                 client.emit('searchResults', results);
             })
             .catch(error => {
@@ -47,11 +47,4 @@ export class SearchGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     }
 
-    private searchData(query: string): string[] {
-        // Replace with your search logic
-        const mockData = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
-        return mockData.filter((item) =>
-            item.toLowerCase().includes(query.toLowerCase()),
-        );
-    }
 }

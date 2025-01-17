@@ -5,6 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { API_URL } from '@env';
 import { io } from 'socket.io-client';
 import * as Location from "expo-location";
+import Pitch from '../../models/Pitch';
 
 
 const { width, height } = Dimensions.get('window');
@@ -26,8 +27,7 @@ const TerrainsScreen = () => {
         longitudeDelta: 0.0421,
     });
     const mapRef = useRef(null);
-
-
+    const [Pitches, setPitches] = useState([]);
     useEffect(() => {
         (async () => {
             try {
@@ -58,8 +58,12 @@ const TerrainsScreen = () => {
                 const newSocket = io(`${API_URL}`);
                 setSocket(newSocket);
                 newSocket.on('searchResults', (data) => {
-                    console.log('Search results:', data);
-                    setResults(data);
+                    console.log('Search data:', data.length);
+                    const pitches = data.map((pitch) => {
+                        return Pitch.fromJsonSearch(pitch);
+                    });
+                    setPitches(pitches);
+                    console.log('Search results:', pitches.length);
                 });
 
                 newSocket.emit('search', { "latitude": latitude, "longitude": longitude, "radius": 1 }); // Send search query to the server
@@ -118,6 +122,20 @@ const TerrainsScreen = () => {
                 showsMyLocationButton
                 ref={mapRef}
             >
+                {Pitches.map((pitch, index) => (
+                    <Marker
+                        key={index}
+                        title={pitch.name}
+                        coordinate={{ latitude: pitch.latitude, longitude: pitch.longitude }}
+                    >
+                        <Callout>
+                            <View style={{ padding: 10 }}>
+                                <Text style={{ fontSize: 16 }}>{pitch.name}</Text>
+                                <Text>{pitch.description}</Text>
+                            </View>
+                        </Callout>
+                    </Marker>
+                ))}
             </MapView>
         </View>
     );

@@ -10,7 +10,11 @@ import { ReservationModule } from './reservation/reservation.module';
 import {SearchGateway} from "./searchGateway";
 
 @Module({
-  imports: [ConfigModule.forRoot({isGlobal: true}), AuthModule, DatabaseModule, UserModule, PitchModule, LocationModule, TimeSlotModule, ReservationModule],
+  imports: [ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath:'.env'
+  }),
+    AuthModule, DatabaseModule, UserModule, PitchModule, LocationModule, TimeSlotModule, ReservationModule],
   controllers: [],
   providers: [SearchGateway],
 })
