@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { Text } from 'react-native';
+
 
 const LazyLoader = () => (
   <View style={styles.container}>

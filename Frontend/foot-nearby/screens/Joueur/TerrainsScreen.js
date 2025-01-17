@@ -1,36 +1,97 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useDispatch } from "react-redux";
+import { API_URL } from '@env';
+import { io } from 'socket.io-client';
+import * as Location from "expo-location";
+import Pitch from '../../models/Pitch';
 
 
 const { width, height } = Dimensions.get('window');
 
 const TerrainsScreen = () => {
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
+    const [radius, setRadius] = useState(null);
     const [items, setItems] = useState([
         { label: '1km', value: '1' },
         { label: '3km', value: '2' },
         { label: '5km', value: '5' },
     ]);
-    const dispatch = useDispatch();
+    const [socket, setSocket] = useState(null);
+    const [location, setLocation] = useState(null); // User's current location
+    const [region, setRegion] = useState({
+        latitude: 37.78825, // Default region
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+    });
+    const mapRef = useRef(null);
+    const [Pitches, setPitches] = useState([]);
+    useEffect(() => {
+        (async () => {
+            try {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== "granted") {
+                    Alert.alert(
+                        "Permission Denied",
+                        "Permission to access location was denied."
+                    );
+                    return;
+                }
 
-    useEffect(async () => {
-        console.log("useEffect called");
-        const response = await dispatch(searchPitch(email, password));
+                let userLocation = await Location.getCurrentPositionAsync({
+                    accuracy: Location.Accuracy.High,
+                });
 
+                const latitude = userLocation.coords.latitude;
+                const longitude = userLocation.coords.longitude;
 
+                setLocation({ latitude, longitude });
+                setRegion({
+                    latitude,
+                    longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                });
+
+                const newSocket = io(`${API_URL}`);
+                setSocket(newSocket);
+                newSocket.on('searchResults', (data) => {
+                    console.log('Search data:', data.length);
+                    const pitches = data.map((pitch) => {
+                        return Pitch.fromJsonSearch(pitch);
+                    });
+                    setPitches(pitches);
+                    console.log('Search results:', pitches.length);
+                });
+
+                newSocket.emit('search', { "latitude": latitude, "longitude": longitude, "radius": 1 }); // Send search query to the server
+
+                return () => {
+                    newSocket.disconnect();
+                };
+            } catch (error) {
+                Alert.alert("Error", "Unable to fetch location.");
+                console.error(error);
+
+            }
+        })();
     }, []);
 
+    const handleSearch = () => {
+        if (socket) {
+            socket.emit('search', { "latitude": region.latitude, "longitude": region.longitude, "radius": radius }); // Send search query to the server
+        }
+    };
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
                 <TouchableOpacity
                     style={styles.searchButton}
                     onPress={() => {
-                        console.log('Search button pressed');
+
+                        handleSearch();
                     }}
                 >
                     <Text
@@ -40,10 +101,10 @@ const TerrainsScreen = () => {
                 <DropDownPicker
                     style={styles.dropdown}
                     open={open}
-                    value={value}
+                    value={radius}
                     items={items}
                     setOpen={setOpen}
-                    setValue={setValue}
+                    setValue={setRadius}
                     setItems={setItems}
                     placeholder="Select an item"
                     textStyle={styles.dropdownText}
@@ -54,13 +115,28 @@ const TerrainsScreen = () => {
 
             <MapView
                 style={styles.map}
-                initialRegion={{
-                    latitude: 37.78825,
-                    longitude: -122.4324,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                }}
-            />
+                region={region}
+                initialRegion={region}
+                onRegionChangeComplete={(newRegion) => setRegion(newRegion)}
+                showsUserLocation
+                showsMyLocationButton
+                ref={mapRef}
+            >
+                {Pitches.map((pitch, index) => (
+                    <Marker
+                        key={index}
+                        title={pitch.name}
+                        coordinate={{ latitude: pitch.latitude, longitude: pitch.longitude }}
+                    >
+                        <Callout>
+                            <View style={{ padding: 10 }}>
+                                <Text style={{ fontSize: 16 }}>{pitch.name}</Text>
+                                <Text>{pitch.description}</Text>
+                            </View>
+                        </Callout>
+                    </Marker>
+                ))}
+            </MapView>
         </View>
     );
 };

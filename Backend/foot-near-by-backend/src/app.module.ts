@@ -7,10 +7,16 @@ import { PitchModule } from './pitch/pitch.module';
 import { LocationModule } from './location/location.module';
 import { TimeSlotModule } from './time-slot/time-slot.module';
 import { ReservationModule } from './reservation/reservation.module';
+import {SearchGateway} from "./searchGateway";
 
 @Module({
-  imports: [ConfigModule.forRoot({isGlobal: true}), AuthModule, DatabaseModule, UserModule, PitchModule, LocationModule, TimeSlotModule, ReservationModule],
+  imports: [ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath:'.env'
+  }),
+    AuthModule, DatabaseModule, UserModule, PitchModule, LocationModule, TimeSlotModule, ReservationModule],
   controllers: [],
-  providers: [],
+  providers: [SearchGateway],
 })
 export class AppModule {}
+  
