@@ -17,6 +17,7 @@ import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
 
 import PitchService from "../../services/PitchService";
+import { useSelector } from "react-redux";
 
 const AddPitchScreen = () => {
   const [name, setName] = useState("");
@@ -27,6 +28,8 @@ const AddPitchScreen = () => {
   const [pricePerHour, setPricePerHour] = useState("");
   const [capacity, setCapacity] = useState(5);
   const [images, setImages] = useState([]);
+
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     (async () => {
@@ -106,6 +109,7 @@ const AddPitchScreen = () => {
       pricePerHour: parseFloat(pricePerHour),
       capacity: parseInt(capacity),
       images: images,
+      createdBy:user.id
     };
 
     try {

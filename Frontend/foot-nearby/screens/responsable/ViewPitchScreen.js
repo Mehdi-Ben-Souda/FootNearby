@@ -11,18 +11,19 @@ import {
   Dimensions,
 } from "react-native";
 import PitchService from "../../services/PitchService";
+import { useSelector } from "react-redux";
 
 const { width: windowWidth } = Dimensions.get("window");
 
 const ViewPitchScreen = ({ navigation }) => {
   const [pitches, setPitches] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const user = useSelector(state => state.auth.user);
   useEffect(() => {
     const fetchPitches = async () => {
       setLoading(true);
       try {
-        const data = await PitchService.getPitchesByUserId(1);
+        const data = await PitchService.getPitchesByUserId(user.id);
         setPitches(data);
       } catch (error) {
         console.error("Error fetching pitches:", error);

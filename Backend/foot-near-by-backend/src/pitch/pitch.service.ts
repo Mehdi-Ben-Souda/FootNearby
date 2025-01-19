@@ -3,13 +3,16 @@ import { Pitch } from './entities/pitch.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import {Column, Repository} from 'typeorm';
 import {Point} from "geojson";
+import { CreatePitchDto } from './dto/create-pitch.dto';
 
 @Injectable()
 export class PitchService {
 
     constructor(@InjectRepository(Pitch) private readonly pitchRepository :Repository<Pitch>,
  ) {}
-    createPitch(newPitch:Pitch) {
+    createPitch(pitchDto:CreatePitchDto) {
+        //var newPitch = new Pitch();
+
         return this.pitchRepository.save(newPitch);
     }
 

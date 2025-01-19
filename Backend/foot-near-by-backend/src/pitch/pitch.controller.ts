@@ -2,13 +2,14 @@ import {BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Qu
 import { PitchService } from './pitch.service';
 import { Pitch } from './entities/pitch.entity';
 import {Point} from "geojson";
+import { CreatePitchDto } from './dto/create-pitch.dto';
 
 @Controller('pitch')
 export class PitchController {
 
     constructor(private readonly pitchService: PitchService) {}
     @Post('add')
-    createPitch(@Body() pitch: Pitch) {
+    createPitch(@Body() pitch: CreatePitchDto) {
         return this.pitchService.createPitch(pitch);
     }
 
@@ -29,6 +30,7 @@ export class PitchController {
 
     @Get('getByUserId/:userId')
     getPitchesByUserId(@Param('userId') userId: number) {
+        console.log('userId:', userId);
         return this.pitchService.getPitchesByUserId(userId);
     }
 

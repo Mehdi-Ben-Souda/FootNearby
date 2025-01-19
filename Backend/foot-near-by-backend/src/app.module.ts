@@ -14,9 +14,9 @@ import {SearchGateway} from "./searchGateway";
     isGlobal: true,
     envFilePath:'.env'
   }),
-    AuthModule, DatabaseModule, UserModule, PitchModule, LocationModule, TimeSlotModule, ReservationModule],
-  controllers: [],
+  AuthModule, DatabaseModule, UserModule, PitchModule, LocationModule, TimeSlotModule, ReservationModule],//, FirebaseModule],  controllers: [],
   providers: [SearchGateway],
+  controllers: [],
 })
 export class AppModule {}
   
