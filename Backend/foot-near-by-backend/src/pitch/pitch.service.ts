@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { Pitch } from './entities/pitch.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {Column, Repository} from 'typeorm';
-import {Point} from "geojson";
+import { Column, Repository } from 'typeorm';
+import { Point } from "geojson";
 import { CreatePitchDto } from './dto/create-pitch.dto';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class PitchService {
 
-    constructor(@InjectRepository(Pitch) private readonly pitchRepository :Repository<Pitch>,
- ) {}
-    createPitch(pitchDto:CreatePitchDto) {
-        //var newPitch = new Pitch();
+    constructor(
+        @InjectRepository(Pitch) private readonly pitchRepository: Repository<Pitch>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) { }
+    async createPitch(pitchDto: CreatePitchDto) {
 
+        var user = await this.userRepository.findOneBy({ id: pitchDto.createdBy });
+        var newPitch = Pitch.fromDto(pitchDto, user);
         return this.pitchRepository.save(newPitch);
     }
 
-    modifyPitch(id:number,newPitch:Partial<Pitch>) {
-        return this.pitchRepository.update(id,newPitch);
-    }
+    modifyPitch(id: number, newPitch: Partial<Pitch>) {
+        return this.pitchRepository.update(id, newPitch);
+    }
 
-    deletePitch(pitchId:number) {
+    deletePitch(pitchId: number) {
         return this.pitchRepository.delete(pitchId);
     }
 
@@ -28,8 +33,8 @@ export class PitchService {
         return this.pitchRepository.find();
     }
 
-    getPitchById(pitchId:number) {
-        return this.pitchRepository.findOneBy({id:pitchId});
+    getPitchById(pitchId: number) {
+        return this.pitchRepository.findOneBy({ id: pitchId });
     }
 
     getPitchesByUserId(userId: number) {
