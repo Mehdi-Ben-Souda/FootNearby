@@ -18,6 +18,11 @@ export class ReservationController {
     return this.reservationService.findOne(+id);
   }
 
+  @Get('user/:id')
+  find(@Param('id') id: string) {
+    return this.reservationService.findByUserId(+id);
+  }
+
   //Not yet implemented
   @Get()
   findAll() {
