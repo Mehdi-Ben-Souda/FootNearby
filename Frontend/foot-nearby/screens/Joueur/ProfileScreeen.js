@@ -11,13 +11,21 @@ const ProfileScreen = () => {
     const navigation = useNavigation();
 
     const handleLogout = () => {
+        dispatch(logout());
         navigation.reset({
             index: 0,
             routes: [{ name: 'Login' }],
         });
-        dispatch(logout());
+
 
     };
+    if (!user) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.name}>Loading...</Text>
+            </View>
+        );
+    }
 
     return (
         <ScrollView style={styles.container}>
