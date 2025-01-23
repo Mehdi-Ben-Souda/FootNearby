@@ -4,6 +4,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { View } from "react-native";
 import TerrainsScreen from "../TerrainsScreen";
 import PitchScheduleScreen from "../PitchScheduleScreen";
+import ReservationList from "../ReservationListPlayer";
+
 
 const Tab = createBottomTabNavigator(); //creation d’ une instance du Tab.Navigator en utilisant createBottomTabNavigator
 const TabNavigator = (props) => {
@@ -23,6 +25,20 @@ const TabNavigator = (props) => {
                     tabBarIcon: ({ color, size }) => (<MaterialCommunityIcons name="calendar" size={size} color={color} style={{ width: '30' }} />),
                     tabBarLabel: 'Horaires'
                 }} />
+                <Tab.Screen
+                    name="Reservation List"
+                    component={ReservationList}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons
+                            name="book-marker"
+                            size={size}
+                            color={color}
+                            style={{ width: "30" }}
+                        />
+                        ),
+                        tabBarLabel: "Reservations",
+                    }} />
 
             </Tab.Navigator>
         </View>

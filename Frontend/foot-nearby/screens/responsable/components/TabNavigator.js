@@ -70,7 +70,7 @@ const TabNavigator = (props) => {
                 style={{ width: "30" }}
               />
             ),
-            tabBarLabel: "Reservations",
+            tabBarLabel: "Reserations",
           }}
         />
       </Tab.Navigator>
