@@ -51,8 +51,8 @@ export class TimeSlotService {
     const slots = await this.timeSlotRepository.find({
       where: {
         date: parsedDate,
-
-      }
+      },
+      relations: ['pitch'],
     });
 
     return slots;

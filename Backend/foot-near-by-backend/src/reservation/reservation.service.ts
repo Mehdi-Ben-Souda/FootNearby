@@ -54,10 +54,28 @@ export class ReservationService {
 
     return this.reservationRepository.find({
       where: { user },
-      relations: ['timeSlot'], // Eager load related entities
+      relations: ['timeSlot', 'timeSlot.pitch'],
+      order: {
+        reservationDate: 'DESC', 
+      },
     });
   }
 
+  async findReservationsByManager(responsibleId: number): Promise<Reservation[]> {
+    const reservations = await this.reservationRepository.find({
+      where: {
+        timeSlot: {
+          pitch: {
+            createdBy: { id: responsibleId },
+          },
+        },
+      },
+      relations: ['user', 'timeSlot', 'timeSlot.pitch'],
+      order: { reservationDate: 'DESC' },
+    });
+  
+    return reservations;
+  }
 
   async findAll(): Promise<Reservation[]> {
     return this.reservationRepository.find({
