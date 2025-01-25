@@ -55,6 +55,17 @@ const ReservationList = () => {
     });
   };
 
+  const deleteReservation = async (reservationId) => {
+    try {
+      await ReservationService.removeReservationById(reservationId);
+      setReservations((prevReservations) =>
+        prevReservations.filter((res) => res.id !== reservationId)
+      );
+    } catch (err) {
+      setError("Erreur lors de la suppression de la réservation");
+    }
+  };
+
   const renderReservationItem = ({ item }) => (
     <View style={styles.reservationCard}>
       <View style={styles.cardHeader}>
@@ -85,6 +96,14 @@ const ReservationList = () => {
           <Text style={styles.dateLabel}>HEURE</Text>
           <Text style={styles.timeSlot}>
             {formatTime(Number(item.timeSlot?.startHour))}
+          </Text>
+        </View>
+        <View style={styles.actions}>
+          <Text
+            style={styles.deleteButton}
+            onPress={() => deleteReservation(item.id)}
+          >
+            Annuler
           </Text>
         </View>
       </View>
@@ -225,6 +244,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     fontWeight: "500",
+  },
+  actions: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  deleteButton: {
+    color: "#e74c3c",
+    fontWeight: "600",
+    fontSize: 14,
+    textTransform: "uppercase",
+    marginTop: 8,
   },
 });
 

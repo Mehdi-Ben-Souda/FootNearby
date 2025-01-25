@@ -29,5 +29,17 @@ const ReservationService = {
       throw error;
     }
   },
+
+  removeReservationById: async (reservationId) => {
+    try {
+      const response = await axios.delete(
+        `${API_URL}/reservation/${reservationId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error removing reservation:", error.response || error);
+      throw error;
+    }
+  },
 };
 export default ReservationService;
