@@ -77,6 +77,22 @@ export class ReservationService {
     return reservations;
   }
 
+  async findReservationByPitch(pitchId: number): Promise<Reservation[]> {
+    const reservations = await this.reservationRepository.find({
+      where: {
+        timeSlot: {
+          pitch: {
+            id: pitchId, // Filtrer par l'ID du terrain
+          },
+        },
+      },
+      relations: ['user', 'timeSlot', 'timeSlot.pitch'],
+      order: { reservationDate: 'DESC' },
+    });
+  
+    return reservations;
+  }
+
   async findAll(): Promise<Reservation[]> {
     return this.reservationRepository.find({
       relations: ['user', 'timeSlot'],
