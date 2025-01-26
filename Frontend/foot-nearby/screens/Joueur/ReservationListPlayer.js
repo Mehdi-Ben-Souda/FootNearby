@@ -129,15 +129,23 @@ const ReservationList = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.title}>Reservation List</Text>
+        <Text style={styles.title}>Liste des Réservations</Text>
       </View>
-      <FlatList
-        data={reservations}
-        renderItem={renderReservationItem}
-        keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
+      {reservations.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Aucune réservation trouvée.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={reservations}
+          renderItem={renderReservationItem}
+          keyExtractor={(item) =>
+            item.id?.toString() || Math.random().toString()
+          }
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 };
@@ -257,6 +265,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textTransform: "uppercase",
     marginTop: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: "#95a5a6",
+    textAlign: "center",
+    fontWeight: "500",
   },
 });
 
