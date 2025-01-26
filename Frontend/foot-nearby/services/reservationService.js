@@ -30,6 +30,21 @@ const ReservationService = {
     }
   },
 
+  getReservationByPitchId: async (pitchId) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/reservation/pitch/${pitchId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching time reservation:",
+        error.response || error
+      );
+      throw error;
+    }
+  },
+
   removeReservationById: async (reservationId) => {
     try {
       const response = await axios.delete(
