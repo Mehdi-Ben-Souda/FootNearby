@@ -18,7 +18,7 @@ const { width: windowWidth } = Dimensions.get("window");
 const ViewPitchScreen = ({ navigation }) => {
   const [pitches, setPitches] = useState([]);
   const [loading, setLoading] = useState(false);
-  const user = useSelector(state => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
   useEffect(() => {
     const fetchPitches = async () => {
       setLoading(true);
@@ -55,7 +55,6 @@ const ViewPitchScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.pitchCard}>
-              {/* Carrousel d'images */}
               <ScrollView
                 horizontal
                 pagingEnabled
@@ -80,7 +79,6 @@ const ViewPitchScreen = ({ navigation }) => {
                 )}
               </ScrollView>
 
-              {/* Informations sur le terrain */}
               <Text style={styles.pitchName}>{item.name}</Text>
               <Text style={styles.pitchDescription}>{item.description}</Text>
               <Text style={styles.pitchInfo}>
@@ -92,6 +90,15 @@ const ViewPitchScreen = ({ navigation }) => {
                 onPress={() => handleEdit(item)}
               >
                 <Text style={styles.buttonText}>Edit</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.editButton, { backgroundColor: "#28a745" }]}
+                onPress={() =>
+                  navigation.navigate("PitchReservations", { pitchId: item.id })
+                }
+              >
+                <Text style={styles.buttonText}>Voir les réservations</Text>
               </TouchableOpacity>
             </View>
           )}

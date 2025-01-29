@@ -18,6 +18,21 @@ export class ReservationController {
     return this.reservationService.findOne(+id);
   }
 
+  @Get('user/:id')
+  find(@Param('id') id: string) {
+    return this.reservationService.findByUserId(+id);
+  }
+
+  @Get('manager/:id')
+  findReservationsByManager(@Param('id') responsibleId: string) {
+    return this.reservationService.findReservationsByManager(+responsibleId);
+  }
+
+  @Get('pitch/:id')
+  findReservationsByPitch(@Param('id') pitchId: string) {
+    return this.reservationService.findReservationByPitch(+pitchId);
+  }
+
   //Not yet implemented
   @Get()
   findAll() {

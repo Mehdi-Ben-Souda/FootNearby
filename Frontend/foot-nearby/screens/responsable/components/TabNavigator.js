@@ -5,6 +5,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { View } from "react-native";
 import ViewPitchScreen from "../ViewPitchScreen";
 import AddPitchScreen from "../AddPitchScreen";
+import ReservationList from "../ReservationList";
 
 const Tab = createBottomTabNavigator(); //creation d’ une instance du Tab.Navigator en utilisant createBottomTabNavigator
 const TabNavigator = (props) => {
@@ -55,6 +56,21 @@ const TabNavigator = (props) => {
               />
             ),
             tabBarLabel: "View Pitch",
+          }}
+        />
+        <Tab.Screen
+          name="Reservation List"
+          component={ReservationList}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="book-marker"
+                size={size}
+                color={color}
+                style={{ width: "30" }}
+              />
+            ),
+            tabBarLabel: "Reserations",
           }}
         />
       </Tab.Navigator>

@@ -46,37 +46,81 @@ export class ReservationService {
     return savedReservation;
   }
 
-  findByUserId(userId: number): Promise<Reservation[]> {
-    const response = this.useService.findOne(userId);
-    var myUser = null;
-    response.then((user) => {
-      if (!user) {
-        return new HttpException('User not found', 404);
-      }
-      myUser = user;
-    })
+  async findByUserId(userId: number): Promise<Reservation[]> {
+    const user = await this.useService.findOne(userId);
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
 
     return this.reservationRepository.find({
-      where: {
-        user: myUser
-      }
+      where: { user },
+      relations: ['timeSlot', 'timeSlot.pitch'],
+      order: {
+        reservationDate: 'DESC', 
+      },
     });
   }
 
-
-  findAll() {
-    return `This action returns all reservation`;
+  async findReservationsByManager(responsibleId: number): Promise<Reservation[]> {
+    const reservations = await this.reservationRepository.find({
+      where: {
+        timeSlot: {
+          pitch: {
+            createdBy: { id: responsibleId },
+          },
+        },
+      },
+      relations: ['user', 'timeSlot', 'timeSlot.pitch'],
+      order: { reservationDate: 'DESC' },
+    });
+  
+    return reservations;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
+  async findReservationByPitch(pitchId: number): Promise<Reservation[]> {
+    const reservations = await this.reservationRepository.find({
+      where: {
+        timeSlot: {
+          pitch: {
+            id: pitchId, // Filtrer par l'ID du terrain
+          },
+        },
+      },
+      relations: ['user', 'timeSlot', 'timeSlot.pitch'],
+      order: { reservationDate: 'DESC' },
+    });
+  
+    return reservations;
+  }
+
+  async findAll(): Promise<Reservation[]> {
+    return this.reservationRepository.find({
+      relations: ['user', 'timeSlot'],
+    });
+  }
+
+  async findOne(id: number): Promise<Reservation> {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id },
+      relations: ['user', 'timeSlot'],
+    });
+
+    if (!reservation) {
+      throw new HttpException(`Reservation with ID ${id} not found`, 404);
+    }
+
+    return reservation;
   }
 
   update(id: number, updateReservationDto: UpdateReservationDto) {
     return `This action updates a #${id} reservation`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reservation`;
+  async remove(id: number): Promise<void> {
+    const reservation = await this.findOne(id);
+
+    await this.timeSlotService.update(reservation.timeSlot.id, { status: SlotStatus.FREE });
+
+    await this.reservationRepository.remove(reservation);
   }
 }

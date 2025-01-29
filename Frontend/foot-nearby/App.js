@@ -14,6 +14,9 @@ const WelcomeScreenManager = lazy(() => import('./screens/responsable/WelcomeScr
 const AddPitchScreen = lazy(() => import('./screens/responsable/AddPitchScreen'));
 const ViewPitchScreen = lazy(() => import('./screens/responsable/ViewPitchScreen'));
 const EditPitchScreen = lazy(() => import('./screens/responsable/EditPitchScreen'));
+const ReservationListScreen = lazy(() =>
+  import("./screens/responsable/ReservationList")
+);
 
 const Stack = createStackNavigator();
 
@@ -62,6 +65,11 @@ const App = () => {
               name="EditPitch"
               children={props => <EditPitchScreen {...props} />}
               options={{ title: 'Edit Pitches' }}
+            />
+            <Stack.Screen
+              name="ReservationList"
+              children={(props) => <ReservationListScreen {...props} />}
+              options={{ title: "Reservation List" }}
             />
           </Stack.Navigator>
         </Suspense>
