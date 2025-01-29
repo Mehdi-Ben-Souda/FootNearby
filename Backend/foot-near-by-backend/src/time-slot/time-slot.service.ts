@@ -44,6 +44,41 @@ export class TimeSlotService {
 
   }
 
+  async generateSlotsForTime(
+    date: string | Date,
+    pitch: Pitch,
+    startHour: number,
+    endHour: number
+  ): Promise<TimeSlot[]> {
+    const parsedDate = typeof date === 'string' ? new Date(date) : date;
+
+    const newSlots = Array.from({ length: endHour - startHour }, (_, i) => {
+      const slot = new TimeSlot();
+      const slotDate = new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), startHour + i, 0, 0, 0));
+      slot.pitch = pitch;
+      slot.date = new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate()));
+      slot.startHour = slotDate.getTime();
+      slot.status = SlotStatus.FREE;
+      return slot;
+    });
+
+    try {
+      const instertionResult = await this.timeSlotRepository.insert(newSlots);
+      return newSlots;
+    } catch (error) {
+      if (error instanceof QueryFailedError && error.message.includes('duplicate key value')) {
+        // Handle unique constraint violation
+        console.error('Unique constraint violation:', error.message);
+        throw new Error('A time slot with the same start hour, date, and pitch already exists.');
+      } else {
+        // Handle other errors
+        throw error;
+      }
+    }
+
+  }
+
+
   async loadSlotsForDay( date: string | Date, pitch: Pitch): Promise<TimeSlot[]> {
     const parsedDate = typeof date === 'string' ? new Date(date) : date;
 

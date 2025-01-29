@@ -7,22 +7,35 @@ import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 
 @Controller('time-slot')
 export class TimeSlotController {
-  constructor(private readonly timeSlotService: TimeSlotService, private readonly pitchService:PitchService ) {}
+  constructor(private readonly timeSlotService: TimeSlotService, private readonly pitchService: PitchService) { }
 
   @Post("add")
-  create(@Body() body:{date: string | Date,pitchId:number} ) {
-    
+  create(@Body() body: { date: string | Date, pitchId: number }) {
+
     const pitch = this.pitchService.getPitchById(body.pitchId);
-    pitch.then((value)=>{
-      return this.timeSlotService.generateSlotsForDay(body.date,value);
+    pitch.then((value) => {
+      try {
+        return this.timeSlotService.generateSlotsForDay(body.date, value);
+      }
+      catch (error) {
+        throw new HttpException('Error creating slots', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    });
+
+  }
+
+  @Post("addByTime")
+  createByTime(@Body() body: { date: string | Date, pitchId: number, startHour: number, endHour: number }) {
+
+    const pitch = this.pitchService.getPitchById(body.pitchId);
+    pitch.then((value) => {
+      return this.timeSlotService.generateSlotsForTime(body.date, value, body.startHour, body.endHour);
     }
     );
-    
-    //return this.timeSlotService.generateSlotsForDay(body.date,pitch);
   }
 
   @Get('get')
-  async find(@Query() query: {date: string; pitchId: number }) {
+  async find(@Query() query: { date: string; pitchId: number }) {
     try {
       const pitch = await this.pitchService.getPitchById(query.pitchId);
       if (!pitch) {
