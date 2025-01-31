@@ -100,6 +100,13 @@ const ViewPitchScreen = ({ navigation }) => {
               >
                 <Text style={styles.buttonText}>Voir les réservations</Text>
               </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.editButton, { backgroundColor: "#007bff" }]}
+                onPress={() => navigation.navigate("GererCreneaux", { pitchId: item.id })}
+              >
+                <Text style={styles.buttonText}>Gérer les créneaux</Text>
+              </TouchableOpacity>
             </View>
           )}
         />
@@ -121,6 +128,7 @@ const styles = StyleSheet.create({
   },
   pitchCard: {
     marginBottom: 20,
+    padding: 10,
     borderRadius: 10,
     backgroundColor: "#f9f9f9",
     shadowColor: "#000",
@@ -135,6 +143,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#007bff",
     padding: 10,
     borderRadius: 5,
+  },
+  manageButton: {
+    marginTop: 10,
+    backgroundColor: "#28a745",
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
   },
   buttonText: {
     color: "#fff",

@@ -4,9 +4,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { API_URL } from '@env';
+import TimeSlotService from '../../services/TimeSlotService';
 const CreerCreneaux = ({ route }) => {
-    //const { pitchId } = route.params;
-    const pitchId = 3;
+    const { pitchId } = route.params;
+    //const pitchId = 3;
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of day
     const [date, setDate] = useState(today);
@@ -27,12 +28,12 @@ const CreerCreneaux = ({ route }) => {
 
     const handleCreateSlots = async () => {
         try {
-            const response = await axios.post(`${API_URL}/time-slot/addByTime`, {
-                date: date.toISOString(),
-                pitchId: pitchId,
-                startHour: startHour.getHours(),
-                endHour: endHour.getHours()
-            });
+            console.log("Pitch id : "+pitchId)
+            const start_Hour = startHour.getTime();
+            const end_Hour = endHour.getTime();
+            const IsoDate = date.toISOString();
+            console.log(IsoDate)
+            const response = await TimeSlotService.createTimeSlot({date:IsoDate,pitchId,startHour:start_Hour,endHour:end_Hour});
             setShowConfirmModal(false);
             alert('Créneaux créés avec succès!');
         } catch (error) {
@@ -46,7 +47,7 @@ const CreerCreneaux = ({ route }) => {
         setShowStartTimePicker(false);
         if (selectedTime) {
             const hours = selectedTime.getHours();
-            const newDate = new Date();
+            const newDate = new Date(date);
             newDate.setHours(hours, 0, 0, 0); // Force minutes to 00
             setStartHour(newDate);
         }
@@ -56,7 +57,7 @@ const CreerCreneaux = ({ route }) => {
         setShowEndTimePicker(false);
         if (selectedTime) {
             const hours = selectedTime.getHours();
-            const newDate = new Date();
+            const newDate = new Date(date);
             newDate.setHours(hours, 0, 0, 0); // Force minutes to 00
             setEndHour(newDate);
         }
@@ -66,8 +67,7 @@ const CreerCreneaux = ({ route }) => {
         setShowDatePicker(false);
         if (selectedDate) {
             const selected = new Date(selectedDate);
-            selected.setHours(0, 0, 0, 0);
-            
+            selected.setHours(1, 0, 0, 0);
             if (selected >= today) {
                 setDate(selected);
             } else {
