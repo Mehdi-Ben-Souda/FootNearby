@@ -12,6 +12,16 @@ const TimeSlotService = {
             throw error;
         }
     },
+    createTimeSlot: async ({date,pitchId,startHour,endHour})=>{
+        try {
+            const response = await axios.post(`${API_URL}/time-slot/addByTime`,{date,pitchId,startHour,endHour});
+            return response.data;
+        } catch (error) {
+            console.error("Error creating time slot:", error.response || error);
+            throw error;
+        }
+    }
+    ,
     bookTimeSlot:async (timeSlotId,userId)=>{
         try {
             const response = await axios.post(`${API_URL}/reservation`,{timeSlotId,userId});

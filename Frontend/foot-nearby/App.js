@@ -4,6 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import store from './redux/stores/store';
 import LazyLoader from './screens/LazyLoader';
+import GererCreneauxScreen from './screens/responsable/GererCreneauxScreen';
+import CreerCreneaux from './screens/responsable/CreerCreneaux';
 
 // Lazy load screens
 const HomeScreen = lazy(() => import('./screens/HomeScreen'));
@@ -70,6 +72,14 @@ const App = () => {
               name="ReservationList"
               children={(props) => <ReservationListScreen {...props} />}
               options={{ title: "Reservation List" }}
+            />
+            <Stack.Screen name="GererCreneaux"
+              children={(props) => <GererCreneauxScreen {...props} />}
+              options={{ title: "Manage Time Slots" }}
+            />
+            <Stack.Screen name="CreerCreneaux"
+              children={(props) => <CreerCreneaux {...props} />}
+              options={{ title: "Create Time Slots" }}
             />
           </Stack.Navigator>
         </Suspense>
