@@ -51,17 +51,18 @@ export class TimeSlotService {
     endHour: number
   ): Promise<TimeSlot[]> {
     const parsedDate = typeof date === 'string' ? new Date(date) : date;
-
-    const newSlots = Array.from({ length: endHour - startHour }, (_, i) => {
+    const hours = (endHour - startHour)/1000/60/60;
+    const newSlots = Array.from({ length: hours }, (_, i) => {
       const slot = new TimeSlot();
-      const slotDate = new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), startHour + i, 0, 0, 0));
+      //const slotDate = new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), startHour+i, 0, 0, 0));
       slot.pitch = pitch;
-      slot.date = new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate()));
-      slot.startHour = slotDate.getTime();
+      //slot.date = new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate()));
+      slot.date = parsedDate;
+      //slot.startHour = slotDate.getTime();
+      slot.startHour = startHour + i*1000*60*60;
       slot.status = SlotStatus.FREE;
       return slot;
     });
-
     try {
       const instertionResult = await this.timeSlotRepository.insert(newSlots);
       return newSlots;
@@ -86,8 +87,12 @@ export class TimeSlotService {
     const slots = await this.timeSlotRepository.find({
       where: {
         date: parsedDate,
+        pitch: { id: pitch.id },
       },
       relations: ['pitch'],
+      order: {
+        startHour: 'ASC' 
+      }
     });
 
     return slots;

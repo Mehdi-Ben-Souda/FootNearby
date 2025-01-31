@@ -10,7 +10,7 @@ export class TimeSlot {
     id: number;
     @Column('bigint')
     startHour: number;
-    @Column()
+    @Column('date')
     date: Date;
     @Column({
         type: 'enum',

@@ -28,8 +28,9 @@ export class TimeSlotController {
   createByTime(@Body() body: { date: string | Date, pitchId: number, startHour: number, endHour: number }) {
 
     const pitch = this.pitchService.getPitchById(body.pitchId);
-    pitch.then((value) => {
-      return this.timeSlotService.generateSlotsForTime(body.date, value, body.startHour, body.endHour);
+    pitch.then(async (value) => {
+      const result= await this.timeSlotService.generateSlotsForTime(body.date, value, body.startHour, body.endHour);
+      return result;
     }
     );
   }
