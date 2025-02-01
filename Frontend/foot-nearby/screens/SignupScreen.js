@@ -52,7 +52,7 @@ const SignupScreen = ({ navigation }) => {
         //   navigation.navigate("WelcomeScreenManager");
         // else
         //   navigation.navigate("WelcomeScreenPlayer");
-        navigation.navigate("LoginScreen");
+        navigation.navigate("Login");
       }
     } catch (err) {
       setError("An error occurred during signup");
