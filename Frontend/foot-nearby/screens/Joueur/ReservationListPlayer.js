@@ -17,10 +17,16 @@ const ReservationList = () => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchReservations();
-  }, [user.id]);
+  if (user)
+    useEffect(() => {
+      fetchReservations();
+    }, []);
+  else
+    return (
+      <View style={styles.container}>
+        <Text style={styles.name}>Loading...</Text>
+      </View>
+    );
 
   const fetchReservations = async () => {
     try {

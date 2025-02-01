@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TimeSlotService {
-  constructor(@InjectRepository(TimeSlot) private readonly timeSlotRepository: Repository<TimeSlot>) {}
+  constructor(@InjectRepository(TimeSlot) private readonly timeSlotRepository: Repository<TimeSlot>) { }
 
   async generateSlotsForDay(
     date: string | Date,
@@ -51,7 +51,7 @@ export class TimeSlotService {
     endHour: number
   ): Promise<TimeSlot[]> {
     const parsedDate = typeof date === 'string' ? new Date(date) : date;
-    const hours = (endHour - startHour)/1000/60/60;
+    const hours = (endHour - startHour) / 1000 / 60 / 60;
     const newSlots = Array.from({ length: hours }, (_, i) => {
       const slot = new TimeSlot();
       //const slotDate = new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), startHour+i, 0, 0, 0));
@@ -59,7 +59,7 @@ export class TimeSlotService {
       //slot.date = new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate()));
       slot.date = parsedDate;
       //slot.startHour = slotDate.getTime();
-      slot.startHour = startHour + i*1000*60*60;
+      slot.startHour = startHour + i * 1000 * 60 * 60;
       slot.status = SlotStatus.FREE;
       return slot;
     });
@@ -80,9 +80,8 @@ export class TimeSlotService {
   }
 
 
-  async loadSlotsForDay( date: string | Date, pitch: Pitch): Promise<TimeSlot[]> {
+  async loadSlotsForDay(date: string | Date, pitch: Pitch): Promise<TimeSlot[]> {
     const parsedDate = typeof date === 'string' ? new Date(date) : date;
-
     // Charger les slots depuis la base de données
     const slots = await this.timeSlotRepository.find({
       where: {
@@ -91,7 +90,7 @@ export class TimeSlotService {
       },
       relations: ['pitch'],
       order: {
-        startHour: 'ASC' 
+        startHour: 'ASC'
       }
     });
 
@@ -99,11 +98,11 @@ export class TimeSlotService {
   }
 
   findOne(id: number) {
-    return  this.timeSlotRepository.findOneBy({id});
+    return this.timeSlotRepository.findOneBy({ id });
   }
 
   update(id: number, updateTimeSlotDto: UpdateTimeSlotDto) {
-    this.timeSlotRepository.findOneBy({id}).then((value) => {
+    this.timeSlotRepository.findOneBy({ id }).then((value) => {
       if (value) {
         this.timeSlotRepository.update(id, updateTimeSlotDto);
       }
@@ -111,7 +110,7 @@ export class TimeSlotService {
         throw new Error('Time slot not found');
       }
     });
-    
+
     return `This action updates a #${id} timeSlot`;
   }
 

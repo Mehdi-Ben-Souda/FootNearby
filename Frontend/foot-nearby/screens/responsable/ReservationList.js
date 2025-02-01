@@ -18,10 +18,16 @@ const ReservationList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const date = new Date(reservations.startHour);
-
-  useEffect(() => {
-    fetchReservations();
-  }, [user.id]);
+  if (user)
+    useEffect(() => {
+      fetchReservations();
+    }, []);
+  else
+    return (
+      <View style={styles.container}>
+        <Text style={styles.name}>Loading...</Text>
+      </View>
+    );
 
   const fetchReservations = async () => {
     try {
