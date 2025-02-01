@@ -4,8 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import store from './redux/stores/store';
 import LazyLoader from './screens/LazyLoader';
-import GererCreneauxScreen from './screens/responsable/GererCreneauxScreen';
-import CreerCreneaux from './screens/responsable/CreerCreneaux';
 
 // Lazy load screens
 const HomeScreen = lazy(() => import('./screens/HomeScreen'));
@@ -16,9 +14,9 @@ const WelcomeScreenManager = lazy(() => import('./screens/responsable/WelcomeScr
 const AddPitchScreen = lazy(() => import('./screens/responsable/AddPitchScreen'));
 const ViewPitchScreen = lazy(() => import('./screens/responsable/ViewPitchScreen'));
 const EditPitchScreen = lazy(() => import('./screens/responsable/EditPitchScreen'));
-const ReservationListScreen = lazy(() =>
-  import("./screens/responsable/ReservationList")
-);
+const ReservationListScreen = lazy(() => import("./screens/responsable/ReservationList"));
+const GererCreneauxScreen = lazy(() => import('./screens/responsable/GererCreneauxScreen'));
+const CreerCreneaux = lazy(() => import('./screens/responsable/CreerCreneaux'));
 
 const Stack = createStackNavigator();
 
@@ -73,11 +71,13 @@ const App = () => {
               children={(props) => <ReservationListScreen {...props} />}
               options={{ title: "Reservation List" }}
             />
-            <Stack.Screen name="GererCreneaux"
+            <Stack.Screen 
+              name="GererCreneaux"
               children={(props) => <GererCreneauxScreen {...props} />}
               options={{ title: "Manage Time Slots" }}
             />
-            <Stack.Screen name="CreerCreneaux"
+            <Stack.Screen 
+              name="CreerCreneaux"
               children={(props) => <CreerCreneaux {...props} />}
               options={{ title: "Create Time Slots" }}
             />
