@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Dimensions,
+  RefreshControl,
 } from "react-native";
 import ReservationService from "../../services/reservationService";
 import { useSelector } from "react-redux";
@@ -17,23 +18,18 @@ const ReservationList = () => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const date = new Date(reservations.startHour);
-  if (user)
-    useEffect(() => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    if (user) {
       fetchReservations();
-    }, []);
-  else
-    return (
-      <View style={styles.container}>
-        <Text style={styles.name}>Loading...</Text>
-      </View>
-    );
+    }
+  }, [user]);
 
   const fetchReservations = async () => {
     try {
       setLoading(true);
-      const data = await ReservationService.getReservationByMangerId(user.id);
-
+      const data = await ReservationService.getReservationByMangerId(user?.id);
       setReservations(data);
     } catch (err) {
       setError("Erreur lors du chargement des réservations");
@@ -41,6 +37,21 @@ const ReservationList = () => {
       setLoading(false);
     }
   };
+
+  const onRefresh = React.useCallback(() => {
+    if (user) {
+      setRefreshing(true);
+      fetchReservations().finally(() => setRefreshing(false));
+    }
+  }, [user]);
+
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.name}>Loading...</Text>
+      </View>
+    );
+  }
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -130,6 +141,9 @@ const ReservationList = () => {
           }
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       )}
     </View>
