@@ -43,10 +43,13 @@ export class PitchService {
         });
     }
 
-    async pitchWithinRadius(center: Point, radiusInKm: number, limit: number = 10) {
-        console.log('Center:', center);
+    async pitchWithinRadius(center: Point, radiusInKm: number, capacity: number) {
+        console.log
+            (
+                "radius :" + radiusInKm + "| capacity: " + capacity
+            )
 
-        return await this.pitchRepository.createQueryBuilder("pitch")
+        var listPitch = await this.pitchRepository.createQueryBuilder("pitch")
             .select([
                 "pitch.id",           // Prefixing with 'pitch.'
                 "pitch.name",
@@ -66,16 +69,19 @@ export class PitchService {
                 pitch.location::geography,
                 ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
                 :radius
-            )`
+            ) AND pitch.capacity >= :capacity`
             )
             .setParameters({
-                longitude: center.coordinates[1], // Longitude from center
-                latitude: center.coordinates[0],  // Latitude from center
-                radius: radiusInKm * 1000 // Convert kilometers to meters
+                longitude: parseFloat(center.coordinates[1].toFixed(6)), // Longitude from center
+                latitude: parseFloat(center.coordinates[0].toFixed(6)),  // Latitude from center
+                radius: radiusInKm * 1000,
+                capacity: capacity
             })
             .orderBy("distance", "ASC")
-            .limit(limit)
             .getRawMany();
+        console.log(listPitch.length);
+        return listPitch;
+
     }
 
 }

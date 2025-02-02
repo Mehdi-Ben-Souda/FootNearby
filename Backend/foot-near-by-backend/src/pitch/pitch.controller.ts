@@ -1,22 +1,22 @@
-import {BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { PitchService } from './pitch.service';
 import { Pitch } from './entities/pitch.entity';
-import {Point} from "geojson";
+import { Point } from "geojson";
 import { CreatePitchDto } from './dto/create-pitch.dto';
 
 @Controller('pitch')
 export class PitchController {
 
-    constructor(private readonly pitchService: PitchService) {}
+    constructor(private readonly pitchService: PitchService) { }
     @Post('add')
     createPitch(@Body() pitch: CreatePitchDto) {
         return this.pitchService.createPitch(pitch);
     }
 
     @Put('modify/:id')
-    modifyPitch(@Param('id') id: number,@Body() pitch: Partial<Pitch>) {
-        return this.pitchService.modifyPitch(id,pitch);
-    }
+    modifyPitch(@Param('id') id: number, @Body() pitch: Partial<Pitch>) {
+        return this.pitchService.modifyPitch(id, pitch);
+    }
 
     @Get('get')
     getAllPitches() {
@@ -43,11 +43,13 @@ export class PitchController {
     async pitchWithinRadius(
         @Query('latitude') latitude: string,
         @Query('longitude') longitude: string,
-        @Query('radius') radius: string
+        @Query('radius') radius: string,
+        @Query('type') type: string
     ) {
         const lat = parseFloat(latitude);
         const lon = parseFloat(longitude);
         const rad = parseFloat(radius);
+        const capacity = parseInt(type, 10);
 
         if (isNaN(lat) || isNaN(lon) || isNaN(rad)) {
             throw new BadRequestException('Invalid latitude, longitude, or radius');
@@ -56,13 +58,14 @@ export class PitchController {
         console.log('Latitude:', lat);
         console.log('Longitude:', lon);
         console.log('Radius:', rad);
+        console.log('Capacity:', capacity);
 
         const centerPoint: Point = {
             type: 'Point',
             coordinates: [lat, lon],
         };
 
-        return await this.pitchService.pitchWithinRadius(centerPoint, rad);
+        return await this.pitchService.pitchWithinRadius(centerPoint, rad, capacity);
     }
 
 }

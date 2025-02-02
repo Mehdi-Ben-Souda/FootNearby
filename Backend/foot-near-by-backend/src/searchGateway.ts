@@ -12,7 +12,7 @@ import { PitchService } from './pitch/pitch.service';
 @WebSocketGateway({ cors: true })
 export class SearchGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private clients = new Set<Socket>();
-    constructor(private readonly pitchService: PitchService) {}
+    constructor(private readonly pitchService: PitchService) { }
 
     handleConnection(client: Socket) {
         console.log('Client connected:', client.id);
@@ -26,18 +26,17 @@ export class SearchGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('search')
     handleSearch(
-        @MessageBody() radiusData: { latitude: string, longitude: string, radius: string },        @ConnectedSocket() client: Socket,
+        @MessageBody() data: { latitude: string, longitude: string, radius: string, type: string }, @ConnectedSocket() client: Socket,
     ): void {
-        console.log(`point from client received: `+radiusData.latitude+' '+ radiusData.longitude );
 
         // Mock search results
         // const results = this.searchData(query);
         this.pitchService.pitchWithinRadius({
             type: 'Point',
-            coordinates: [parseFloat(radiusData.latitude), parseFloat(radiusData.longitude)],
-        }, parseFloat(radiusData.radius))
+            coordinates: [parseFloat(data.latitude), parseFloat(data.longitude)],
+        }, parseFloat(data.radius), parseInt(data.type))
             .then(results => {
-                console.log(results); 
+                console.log(results.length + ' results found');
                 client.emit('searchResults', results);
             })
             .catch(error => {
