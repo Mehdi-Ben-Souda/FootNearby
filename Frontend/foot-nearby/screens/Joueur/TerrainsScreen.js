@@ -1,72 +1,72 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+    View,
+    StyleSheet,
+    Dimensions,
+    TouchableOpacity,
+    Text,
+    ActivityIndicator,
+    Alert
+} from 'react-native';
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { API_URL } from '@env';
 import { io } from 'socket.io-client';
 import * as Location from "expo-location";
+import { useNavigation } from '@react-navigation/native';
 import Pitch from '../../models/Pitch';
-
 
 const { width, height } = Dimensions.get('window');
 
+
+
 const TerrainsScreen = () => {
-    const [open, setOpen] = useState(false);
-    const [radius, setRadius] = useState(null);
-    const [items, setItems] = useState([
-        { label: '1km', value: '1' },
-        { label: '3km', value: '2' },
-        { label: '5km', value: '5' },
-    ]);
+    const [openRadius, setOpenRadius] = useState(false);
+    const [openType, setOpenType] = useState(false);
+    const [radius, setRadius] = useState('1');
+    const [type, setType] = useState('7');
+
     const [socket, setSocket] = useState(null);
-    const [location, setLocation] = useState(null); // User's current location
-    const [region, setRegion] = useState({
-        latitude: 37.78825, // Default region
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-    });
+    const [location, setLocation] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [pitches, setPitches] = useState([]);
+
     const mapRef = useRef(null);
-    const [Pitches, setPitches] = useState([]);
+    const navigation = useNavigation();
+
     useEffect(() => {
-        (async () => {
+        const fetchLocation = async () => {
             try {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== "granted") {
-                    Alert.alert(
-                        "Permission Denied",
-                        "Permission to access location was denied."
-                    );
+                    Alert.alert("Permission Denied", "Enable location to find pitches.");
                     return;
                 }
 
-                let userLocation = await Location.getCurrentPositionAsync({
-                    accuracy: Location.Accuracy.High,
-                });
-
-                const latitude = userLocation.coords.latitude;
-                const longitude = userLocation.coords.longitude;
-
-                setLocation({ latitude, longitude });
-                setRegion({
-                    latitude,
-                    longitude,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                });
+                let userLocation = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+                setLocation(userLocation.coords);
 
                 const newSocket = io(`${API_URL}`);
                 setSocket(newSocket);
+
                 newSocket.on('searchResults', (data) => {
-                    console.log('Search data:', data.length);
-                    const pitches = data.map((pitch) => {
-                        return Pitch.fromJsonSearch(pitch);
-                    });
-                    setPitches(pitches);
-                    console.log('Search results:', pitches.length);
+                    const formattedPitches = data.map(Pitch.fromJsonSearch);
+                    setPitches(formattedPitches);
+
+                    if (formattedPitches.length > 0) {
+                        const { latitude, longitude } = formattedPitches[0];
+                        mapRef.current?.animateToRegion({
+                            latitude,
+                            longitude,
+                            latitudeDelta: 0.05,
+                            longitudeDelta: 0.05,
+                        }, 1000);
+
+                    }
+                    setLoading(false);
                 });
 
-                newSocket.emit('search', { "latitude": latitude, "longitude": longitude, "radius": 1 }); // Send search query to the server
+                newSocket.emit('search', { latitude: userLocation.coords.latitude, longitude: userLocation.coords.longitude, radius: radius, type: type });
 
                 return () => {
                     newSocket.disconnect();
@@ -74,69 +74,98 @@ const TerrainsScreen = () => {
             } catch (error) {
                 Alert.alert("Error", "Unable to fetch location.");
                 console.error(error);
-
+            } finally {
+                setLoading(false);
             }
-        })();
+        };
+
+        fetchLocation();
     }, []);
 
-    const handleSearch = () => {
-        if (socket) {
-            socket.emit('search', { "latitude": region.latitude, "longitude": region.longitude, "radius": radius }); // Send search query to the server
+    const handleSearch = useCallback(() => {
+        if (socket && location) {
+            setLoading(true);
+            socket.emit('search', { latitude: location.latitude, longitude: location.longitude, radius: radius, type: type });
         }
-    };
+    }, [socket, location, radius, type]);
+
     return (
         <View style={styles.container}>
+            {/* Search Controls */}
             <View style={styles.searchContainer}>
-                <TouchableOpacity
-                    style={styles.searchButton}
-                    onPress={() => {
+                <View style={styles.dropdownWrapper}>
 
-                        handleSearch();
-                    }}
-                >
-                    <Text
-                        style={styles.searchButtonText}
-                    >Search</Text>
+                    <DropDownPicker
+                        open={openRadius}
+                        value={radius}
+                        items={[
+                            { label: '1km', value: '1' },
+                            { label: '3km', value: '3' },
+                            { label: '5km', value: '5' }
+                        ]}
+                        setOpen={setOpenRadius}
+                        setValue={setRadius}
+                        placeholder={"Select radius"}
+                        style={styles.dropdown}
+                        textStyle={styles.dropdownText}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                    />
+
+                </View>
+                <View style={styles.dropdownWrapper}>
+                    <DropDownPicker
+                        open={openType}
+                        value={type}
+                        items={[
+                            { label: "5v5", value: '5' },
+                            { label: "7v7", value: '7' },
+                            { label: "9v9", value: '9' },
+                            { label: "11v11", value: '11' }
+                        ]}
+                        setOpen={setOpenType}
+                        setValue={setType}
+                        placeholder={"Select type"}
+                        style={styles.dropdown}
+                        textStyle={styles.dropdownText}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                    />
+
+                </View>
+                <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+                    {loading ? (
+                        <ActivityIndicator color="white" />
+                    ) : (
+                        <Text style={styles.searchButtonText}>Search</Text>
+                    )}
                 </TouchableOpacity>
-                <DropDownPicker
-                    style={styles.dropdown}
-                    open={open}
-                    value={radius}
-                    items={items}
-                    setOpen={setOpen}
-                    setValue={setRadius}
-                    setItems={setItems}
-                    placeholder="Select an item"
-                    textStyle={styles.dropdownText}
-                    dropDownContainerStyle={styles.dropdownContainer}
-                />
-
             </View>
 
-            <MapView
-                style={styles.map}
-                region={region}
-                initialRegion={region}
-                onRegionChangeComplete={(newRegion) => setRegion(newRegion)}
-                showsUserLocation
-                showsMyLocationButton
-                ref={mapRef}
-            >
-                {Pitches.map((pitch, index) => (
-                    <Marker
-                        key={index}
-                        title={pitch.name}
-                        coordinate={{ latitude: pitch.latitude, longitude: pitch.longitude }}
-                    >
-                        <Callout>
-                            <View style={{ padding: 10 }}>
-                                <Text style={{ fontSize: 16 }}>{pitch.name}</Text>
-                                <Text>{pitch.description}</Text>
-                            </View>
-                        </Callout>
-                    </Marker>
-                ))}
-            </MapView>
+
+            {/* Map View */}
+            {location ? (
+                <MapView
+                    // ref={mapRef}
+                    // provider={PROVIDER_GOOGLE}
+                    style={styles.map}
+                    region={{
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01,
+                    }}
+                    showsUserLocation
+                    showsMyLocationButton
+                >
+                    {pitches.map((pitch, index) => (
+                        <Marker key={index} coordinate={{ latitude: pitch.latitude, longitude: pitch.longitude }} onPress={() => navigation.navigate('PitchScreen', { pitch })}>
+                        </Marker>
+                    ))}
+                </MapView>
+            ) : (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="black" />
+                </View>
+            )}
         </View>
     );
 };
@@ -151,48 +180,69 @@ const styles = StyleSheet.create({
     searchContainer: {
         position: 'absolute',
         top: 20,
-        left: width * 0.1,
+        left: width * 0.05,
+        width: width * 0.9,
+        backgroundColor: 'white',
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'white',
-        width: width * 0.8,
-        height: height * 0.08,
-        borderRadius: 12,
         padding: 10,
+        borderRadius: 12,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.2,
-        shadowRadius: 4,
-        zIndex: 100,
+        shadowRadius: 5,
+        elevation: 5,
+        zIndex: 10,
+    },
+    dropdownWrapper: {
+        flex: 1,
+        marginRight: 10,
     },
     dropdown: {
         backgroundColor: '#f9f9f9',
         borderColor: '#ddd',
         borderRadius: 8,
-        width: "50%",
-        height: "100%"
     },
     dropdownText: {
         fontSize: 14,
         color: '#333',
     },
     dropdownContainer: {
-        width: "50%",
         borderColor: '#ddd',
     },
     searchButton: {
-        margin: 10,
-        height: "100%",
-        backgroundColor: 'black',
+        height: 50,
+        backgroundColor: 'black', // Green for better contrast
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
-        width: "30%",
+        paddingHorizontal: 15,
     },
     searchButtonText: {
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    calloutContainer: {
+        width: 180,
+        padding: 8,
+        borderRadius: 10,
+        backgroundColor: '#fff',
+        elevation: 5,
+    },
+    calloutTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 3,
+    },
+    calloutDescription: {
+        fontSize: 14,
+        color: '#666',
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

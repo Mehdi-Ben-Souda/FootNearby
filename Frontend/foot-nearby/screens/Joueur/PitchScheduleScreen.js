@@ -9,16 +9,15 @@ import { ScrollView } from 'react-native-gesture-handler';
 import ReservationModal from './components/ReservationModal';
 import { useSelector } from 'react-redux';
 
-const PitchScheduleScreen = ({ }) => {
-
-    const pitchId = 3;
+const PitchScheduleScreen = ({ route }) => {
+    const pitchId = route.params;
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [slots, setSlots] = useState([]);
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState(null);
 
-    let user= useSelector(state => state.auth.user);
+    let user = useSelector(state => state.auth.user);
 
     useEffect(() => {
         fetchSlots();
@@ -42,7 +41,7 @@ const PitchScheduleScreen = ({ }) => {
             console.log("Slot booked: ", slot.id);
             console.log("User: ", user.id);
             await TimeSlotService.bookTimeSlot(slot.id, user.id);
-            
+
             Alert.alert('Succès', 'Créneau réservé avec succès');
             setModalVisible(false);
             fetchSlots(); // Refresh slots

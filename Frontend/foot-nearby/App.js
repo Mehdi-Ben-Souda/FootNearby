@@ -18,6 +18,8 @@ const ReservationListScreen = lazy(() => import("./screens/responsable/Reservati
 const GererCreneauxScreen = lazy(() => import('./screens/responsable/GererCreneauxScreen'));
 const CreerCreneaux = lazy(() => import('./screens/responsable/CreerCreneaux'));
 
+const PitchScheduleScreen = lazy(() => import('./screens/Joueur/PitchScheduleScreen'));
+const PitchScreen = lazy(() => import('./screens/PitchScreen'));
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -71,15 +73,25 @@ const App = () => {
               children={(props) => <ReservationListScreen {...props} />}
               options={{ title: "Reservation List" }}
             />
-            <Stack.Screen 
+            <Stack.Screen
               name="GererCreneaux"
               children={(props) => <GererCreneauxScreen {...props} />}
               options={{ title: "Manage Time Slots" }}
             />
-            <Stack.Screen 
+            <Stack.Screen
               name="CreerCreneaux"
               children={(props) => <CreerCreneaux {...props} />}
               options={{ title: "Create Time Slots" }}
+            />
+            <Stack.Screen
+              name="PitchScreen"
+              children={props => <PitchScreen {...props} />}
+              options={{ title: 'Pitch' }}
+            />
+            <Stack.Screen
+              name='PitchScheduleScreen'
+              children={(props) => <PitchScheduleScreen {...props} />}
+              options={{ title: 'Pitch Schedule' }}
             />
           </Stack.Navigator>
         </Suspense>
