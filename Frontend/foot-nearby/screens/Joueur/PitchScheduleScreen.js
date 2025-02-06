@@ -10,7 +10,7 @@ import ReservationModal from './components/ReservationModal';
 import { useSelector } from 'react-redux';
 
 const PitchScheduleScreen = ({ route }) => {
-    const pitchId = route.params;
+    const pitchId = route.params.pitchId;
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [slots, setSlots] = useState([]);
     const [loading, setLoading] = useState(false);
