@@ -18,6 +18,7 @@ const { width: windowWidth } = Dimensions.get("window");
 const ViewPitchScreen = ({ navigation }) => {
   const [pitches, setPitches] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [imageLoadErrors, setImageLoadErrors] = useState({});
   const user = useSelector((state) => state.auth.user);
   useEffect(() => {
     const fetchPitches = async () => {
@@ -43,6 +44,38 @@ const ViewPitchScreen = ({ navigation }) => {
     navigation.navigate("EditPitch", { pitch });
   };
 
+  const handleImageError = (imageId) => {
+    setImageLoadErrors(prev => ({
+      ...prev,
+      [imageId]: true
+    }));
+  };
+
+  const renderPitchImage = (image, index, pitchId) => {
+    if (imageLoadErrors[`${pitchId}-${index}`]) {
+      return (
+        <View 
+          key={`${pitchId}-${index}`}
+          style={[styles.pitchImage, styles.fallbackImageContainer]}
+        >
+          <Text style={styles.fallbackText}>Image unavailable</Text>
+        </View>
+      );
+    }
+
+    return (
+      <Image
+        key={`${pitchId}-${index}`}
+        source={{ 
+          uri: PitchService.getImageUrl(image),
+          headers: { 'Cache-Control': 'max-age=3600' }
+        }}
+        style={styles.pitchImage}
+        onError={() => handleImageError(`${pitchId}-${index}`)}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>List of Pitches</Text>
@@ -62,20 +95,14 @@ const ViewPitchScreen = ({ navigation }) => {
                 contentContainerStyle={styles.imageCarousel}
               >
                 {Array.isArray(item.images) && item.images.length > 0 ? (
-                  item.images.map((image, index) => (
-                    <Image
-                      key={index}
-                      source={{ uri: image }}
-                      style={styles.pitchImage}
-                    />
-                  ))
+                  item.images.map((image, index) => renderPitchImage(image, index, item.id))
                 ) : (
-                  <Image
-                    source={{
-                      uri: "https://via.placeholder.com/300x200",
-                    }}
-                    style={styles.pitchImage}
-                  />
+                  <View 
+                    key={`${item.id}-fallback`}
+                    style={[styles.pitchImage, styles.fallbackImageContainer]}
+                  >
+                    <Text style={styles.fallbackText}>No images available</Text>
+                  </View>
                 )}
               </ScrollView>
 
@@ -185,6 +212,15 @@ const styles = StyleSheet.create({
   imageCarousel: {
     flexDirection: "row",
     marginBottom: 10,
+  },
+  fallbackImageContainer: {
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fallbackText: {
+    color: '#666',
+    fontSize: 14,
   },
 });
 
