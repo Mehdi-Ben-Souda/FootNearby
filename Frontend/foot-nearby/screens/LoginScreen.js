@@ -83,6 +83,10 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.buttonText}>Log in</Text>
         )}
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
+        <Text style={[styles.buttonText, { color: '#000000' }]}>Back to Welcome</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -134,6 +138,17 @@ const styles = StyleSheet.create({
     color: "#FFFFFF", // Texte blanc
     fontSize: 16,
     fontWeight: "bold",
+  },
+  backButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#000000",
+    marginTop: 10,
   },
 });
 
