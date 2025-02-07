@@ -20,6 +20,7 @@ const CreerCreneaux = lazy(() => import('./screens/responsable/CreerCreneaux'));
 
 const PitchScheduleScreen = lazy(() => import('./screens/Joueur/PitchScheduleScreen'));
 const PitchScreen = lazy(() => import('./screens/PitchScreen'));
+const SplashScreen = lazy(() => import('./screens/SplashScreen'));
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -27,7 +28,7 @@ const App = () => {
     <Provider store={store}>
       <NavigationContainer>
         <Suspense fallback={<LazyLoader />}>
-          <Stack.Navigator initialRouteName="Home">
+          <Stack.Navigator initialRouteName="SplashScreen">
             <Stack.Screen
               name="Home"
               children={props => <HomeScreen {...props} />}
@@ -92,6 +93,11 @@ const App = () => {
               name='PitchScheduleScreen'
               children={(props) => <PitchScheduleScreen {...props} />}
               options={{ title: 'Pitch Schedule' }}
+            />
+            <Stack.Screen
+              name="SplashScreen"
+              children={(props) => <SplashScreen {...props} />}
+              options={{ headerShown: false }}
             />
           </Stack.Navigator>
         </Suspense>
