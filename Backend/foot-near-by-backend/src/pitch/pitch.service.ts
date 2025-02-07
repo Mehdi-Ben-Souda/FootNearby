@@ -69,7 +69,7 @@ export class PitchService {
                 pitch.location::geography,
                 ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
                 :radius
-            ) AND pitch.capacity >= :capacity`
+            ) AND pitch.capacity = :capacity`
             )
             .setParameters({
                 longitude: parseFloat(center.coordinates[1].toFixed(6)), // Longitude from center
