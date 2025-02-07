@@ -77,7 +77,8 @@ const AddPitchScreen = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.5, // Compress image to 50% quality
+      base64: true, // Add this to get base64 string
     });
 
     if (result.assets && result.assets[0]?.uri) {
@@ -98,27 +99,40 @@ const AddPitchScreen = () => {
   };
 
   const handleSubmit = async () => {
-    const pitchData = {
-      name,
-      description,
-      address,
-      location: {
-        type: "Point",
-        coordinates: [parseFloat(longitude), parseFloat(latitude)],
-      },
-      pricePerHour: parseFloat(pricePerHour),
-      capacity: parseInt(capacity),
-      images: images,
-      createdBy:user.id
-    };
-
     try {
+      // Upload images first
+      const uploadedImageNames = await Promise.all(
+        images.map(imageUri => PitchService.uploadImage(imageUri))
+      );
+
+      const pitchData = {
+        name,
+        description,
+        address,
+        location: {
+          type: "Point",
+          coordinates: [parseFloat(longitude), parseFloat(latitude)],
+        },
+        pricePerHour: parseFloat(pricePerHour),
+        capacity: parseInt(capacity),
+        images: uploadedImageNames,
+        createdBy: user.id
+      };
+
       const response = await PitchService.addPitch(pitchData);
       Alert.alert("Success", "Pitch added successfully!");
       console.log("Response:", response);
     } catch (error) {
       Alert.alert("Error", "Failed to add pitch. Please try again.");
+      console.error(error);
     }
+  };
+
+  const renderImage = (uri) => {
+    if (uri.startsWith('file://') || uri.startsWith('content://')) {
+      return { uri };
+    }
+    return { uri: PitchService.getImageUrl(uri) };
   };
 
   return (
@@ -173,7 +187,7 @@ const AddPitchScreen = () => {
           contentContainerStyle={styles.imagesPreview}
           renderItem={({ item, index }) => (
             <View style={styles.imageWrapper}>
-              <Image source={{ uri: item }} style={styles.previewImage} />
+              <Image source={renderImage(item)} style={styles.previewImage} />
               <TouchableOpacity
                 style={styles.removeButton}
                 onPress={() => removeImage(index)}

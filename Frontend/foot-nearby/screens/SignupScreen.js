@@ -138,6 +138,9 @@ const SignupScreen = ({ navigation }) => {
             <Text style={styles.buttonText}>Sign up</Text>
           )}
         </TouchableOpacity>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
+          <Text style={[styles.buttonText, { color: '#000000' }]}>Back to Welcome</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -214,6 +217,17 @@ const styles = StyleSheet.create({
   },
   result: {
     fontSize: 16,
+  },
+  backButton: {
+    width: width * 0.8,
+    height: 50,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#000000",
+    marginBottom: 20,
   },
 });
 

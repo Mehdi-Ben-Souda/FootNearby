@@ -21,6 +21,7 @@ const CreerCreneaux = lazy(() => import('./screens/responsable/CreerCreneaux'));
 const PitchScheduleScreen = lazy(() => import('./screens/Joueur/PitchScheduleScreen'));
 const PitchScreen = lazy(() => import('./screens/PitchScreen'));
 const SplashScreen = lazy(() => import('./screens/SplashScreen'));
+const PitchReservations = lazy(() => import('./screens/responsable/PitchReservations'));
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -37,12 +38,12 @@ const App = () => {
             <Stack.Screen
               name="Login"
               children={props => <LoginScreen {...props} />}
-              options={{ title: 'Log in' }}
+              options={{ title: 'Connexion' }}
             />
             <Stack.Screen
               name="Signup"
               children={props => <SignupScreen {...props} />}
-              options={{ title: 'Sign up' }}
+              options={{ title: 'Inscription' }}
             />
             <Stack.Screen
               name="WelcomeScreenPlayer"
@@ -57,32 +58,32 @@ const App = () => {
             <Stack.Screen
               name="AddPitch"
               children={props => <AddPitchScreen {...props} />}
-              options={{ title: 'Add a Pitch' }}
+              options={{ title: 'Ajouter terrain' }}
             />
             <Stack.Screen
               name="ViewPitch"
               children={props => <ViewPitchScreen {...props} />}
-              options={{ title: 'View Pitches' }}
+              options={{ title: 'Voir mon terrain' }}
             />
             <Stack.Screen
               name="EditPitch"
               children={props => <EditPitchScreen {...props} />}
-              options={{ title: 'Edit Pitches' }}
+              options={{ title: 'Editer terrain' }}
             />
             <Stack.Screen
               name="ReservationList"
               children={(props) => <ReservationListScreen {...props} />}
-              options={{ title: "Reservation List" }}
+              options={{ title: "Liste de réservations" }}
             />
             <Stack.Screen
               name="GererCreneaux"
               children={(props) => <GererCreneauxScreen {...props} />}
-              options={{ title: "Manage Time Slots" }}
+              options={{ title: "Managment des créneaux" }}
             />
             <Stack.Screen
               name="CreerCreneaux"
               children={(props) => <CreerCreneaux {...props} />}
-              options={{ title: "Create Time Slots" }}
+              options={{ title: "Ajout de créneaux" }}
             />
             <Stack.Screen
               name="PitchScreen"
@@ -92,7 +93,12 @@ const App = () => {
             <Stack.Screen
               name='PitchScheduleScreen'
               children={(props) => <PitchScheduleScreen {...props} />}
-              options={{ title: 'Pitch Schedule' }}
+              options={{ title: 'Programmation temporelle' }}
+            />
+            <Stack.Screen
+              name='PitchReservations'
+              children={(props) => <PitchReservations {...props} />}
+              options={{ title: 'Reservations du terrain' }}
             />
             <Stack.Screen
               name="SplashScreen"

@@ -33,6 +33,37 @@ const PitchService = {
       throw error;
     }
   },
+
+  uploadImage: async (imageUri) => {
+    try {
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      
+      return new Promise((resolve, reject) => {
+        reader.onload = async () => {
+          try {
+            const base64data = reader.result;
+            const uploadResponse = await axios.post(`${API_URL}/images/upload`, {
+              image: base64data
+            });
+            resolve(uploadResponse.data.fileName);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = () => reject(new Error('Failed to read image'));
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      throw error;
+    }
+  },
+
+  getImageUrl: (fileName) => {
+    return `${API_URL}/images/${fileName}`;
+  }
 };
 
 export default PitchService;

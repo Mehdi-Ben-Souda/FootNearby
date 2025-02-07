@@ -30,6 +30,8 @@ const EditPitchScreen = ({ route, navigation }) => {
   );
   const [capacity, setCapacity] = useState(pitch.capacity);
   const [images, setImages] = useState(pitch.images || []);
+  const [imageLoadErrors, setImageLoadErrors] = useState({});
+  const [isUploading, setIsUploading] = useState(false);
 
   const pickImage = async () => {
     if (images.length >= 5) {
@@ -37,28 +39,40 @@ const EditPitchScreen = ({ route, navigation }) => {
       return;
     }
 
-    let permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    try {
+      let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (permissionResult.status !== "granted") {
+        Alert.alert("Permission Denied", "Permission to access the gallery was denied.");
+        return;
+      }
 
-    if (permissionResult.status !== "granted") {
-      Alert.alert(
-        "Permission Denied",
-        "Permission to access the gallery was denied."
-      );
-      return;
-    }
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.5,
+        base64: true,
+      });
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+      if (result.canceled) {
+        return;
+      }
 
-    if (result.assets && result.assets[0]?.uri) {
-      setImages((prevImages) => [...prevImages, result.assets[0].uri]);
-    } else {
-      Alert.alert("Error", "No image selected.");
+      if (result.assets && result.assets[0]?.uri) {
+        setIsUploading(true);
+        try {
+          const fileName = await PitchService.uploadImage(result.assets[0].uri);
+          setImages(prevImages => [...prevImages, fileName]);
+        } catch (error) {
+          Alert.alert("Error", "Failed to upload image. Please try again.");
+          console.error("Image upload error:", error);
+        } finally {
+          setIsUploading(false);
+        }
+      }
+    } catch (error) {
+      Alert.alert("Error", "An error occurred while selecting the image.");
+      console.error("Image picker error:", error);
     }
   };
 
@@ -97,6 +111,33 @@ const EditPitchScreen = ({ route, navigation }) => {
     } catch (error) {
       Alert.alert("Error", "Failed to update pitch. Please try again.");
     }
+  };
+
+  const renderImage = (imageName, index) => {
+    const imageKey = `${pitch.id}-${index}`;
+    
+    if (imageLoadErrors[imageKey]) {
+      return (
+        <View 
+          key={imageKey}
+          style={[styles.previewImage, styles.fallbackImageContainer]}
+        >
+          <Text style={styles.fallbackText}>!</Text>
+        </View>
+      );
+    }
+  
+    return (
+      <Image
+        key={imageKey}
+        source={{ 
+          uri: PitchService.getImageUrl(imageName),
+          headers: { 'Cache-Control': 'max-age=3600' }
+        }}
+        style={styles.previewImage}
+        onError={() => setImageLoadErrors(prev => ({ ...prev, [imageKey]: true }))}
+      />
+    );
   };
 
   return (
@@ -141,17 +182,29 @@ const EditPitchScreen = ({ route, navigation }) => {
         </Picker>
       </View>
       <View style={styles.imagePickerContainer}>
-        <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
-          <Text style={styles.imagePickerText}>Select Images</Text>
+        <TouchableOpacity 
+          style={[
+            styles.imagePickerButton,
+            isUploading && styles.disabledButton
+          ]} 
+          onPress={pickImage}
+          disabled={isUploading}
+        >
+          <Text style={styles.imagePickerText}>
+            {isUploading ? "Uploading..." : "Select Images"}
+          </Text>
         </TouchableOpacity>
         <FlatList
           data={images}
           horizontal
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(_, index) => `${pitch.id}-image-${index}`}
           contentContainerStyle={styles.imagesPreview}
           renderItem={({ item, index }) => (
-            <View style={styles.imageWrapper}>
-              <Image source={{ uri: item }} style={styles.previewImage} />
+            <View 
+              key={`${pitch.id}-wrapper-${index}`}
+              style={styles.imageWrapper}
+            >
+              {renderImage(item, index)}
               <TouchableOpacity
                 style={styles.removeButton}
                 onPress={() => removeImage(index)}
@@ -253,6 +306,18 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 12,
     fontWeight: "bold",
+  },
+  fallbackImageContainer: {
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fallbackText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
 });
 
